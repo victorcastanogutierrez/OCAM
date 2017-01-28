@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html ng-app='MapaExcursionistas'>
+  <head>
+    <style>
+       #map {
+        height: 50em;
+        width: 100%;
+       }
+    </style>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <script language="JavaScript" type="text/javascript" src="lib/jquery-3.1.1.min.js"></script>
+    <script language="JavaScript" type="text/javascript" src="lib/angular.min.js"></script>
+    <!-- <script language="JavaScript" type="text/javascript" src="src/main.js"></script> -->
+
+    <script language="JavaScript" type="text/javascript" src="src/mapaexcursionistas.module.js"></script>
+    <script language="JavaScript" type="text/javascript" src="src/excursionistas/excursionistas.controller.js"></script>
+    <script language="JavaScript" type="text/javascript" src="src/mapa.service.js"></script>
+
+    <div class="row">
+      <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+        <div id="map"></div>
+      </div>
+      <div class="cog-lg-2 col-md-2" ng-controller='ExcursionistasController as ectrl'>
+        <div class="row">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="x in ectrl.excursionistas">
+                <td>{{x.nombre}}</td>
+                <td>
+                  <button type="button" class="btn btn-default"
+                          ng-click="ectrl.mostrarExcursionista($index)">
+                    {{x.estado}}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjr1cC5KFP-Nw3f7NtZJSpP6yxROiauPs&callback=initMap">
+    </script>
+  </body>
+</html>
