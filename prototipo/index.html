@@ -25,10 +25,11 @@
       </div>
       <div class="cog-lg-2 col-md-2" ng-controller='ExcursionistasController as ectrl'>
         <div class="row">
+          <input type="text" class="form-control" ng-model="ectrl.nombre" ng-change="ectrl.busqueda()" placeholder="Buscar por nombre" />
           <table class="table table-hover">
             <thead>
               <tr>
-                <th>Nombre</th>
+                <th>Excursionista</th>
                 <th></th>
               </tr>
             </thead>

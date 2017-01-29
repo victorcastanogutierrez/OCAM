@@ -17,6 +17,11 @@ function ExcursionistasController(MapaFactory) {
       estado: "Mostrar",
     });
   }
+  ex.excursionistasBase = ex.excursionistas;
+
+  ex.busqueda = function () {
+    ex.excursionistas = ex.excursionistasBase.filter(x => x.nombre.includes(ex.nombre));
+  }
 
   ex.mostrarExcursionista = function(index) {
     if (ex.excursionistas[index].estado == "Ocultar") {
