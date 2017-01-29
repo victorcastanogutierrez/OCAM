@@ -51,6 +51,7 @@ function cargarMapa() {
   map = new google.maps.Map(document.getElementById("map"), mapOptions);
 }
 
+
 function cargarRutaGPX() {
   //Carga el gpx descargando del XML los datos
   $.ajax({

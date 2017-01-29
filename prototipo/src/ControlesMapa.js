@@ -89,16 +89,9 @@ function dropDownControl(options){
 function buttonControl(options) {
   var control = document.createElement('DIV');
   control.innerHTML = options.name;
-  control.style.border = '1px solid black';
-  control.style.position = 'absolute';
-  control.style.backgroundColor = 'white';
-  control.style.textAlign = 'center';
-  control.style.width = '5em';
-  control.style.cursor = 'pointer';
-  control.style.right = '15.3em';
-  control.className = 'button';
+  control.className = 'button gmaps-button';
   control.index = 1;
-
+  control.style.marginTop = '10px';
   // Add the control to the map
   options.gmap.controls[options.position].push(control);
 
