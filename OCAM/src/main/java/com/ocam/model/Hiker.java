@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -29,6 +30,17 @@ public class Hiker extends BaseEntity {
 	
 	@ManyToMany (mappedBy="guides")
 	private Set<Activity> activityGuide;
+	
+	@OneToMany(mappedBy = "hiker")
+	private Set<Report> reports;
+
+	public Set<Report> getReports() {
+		return reports;
+	}
+
+	public void setReports(Set<Report> reports) {
+		this.reports = reports;
+	}
 
 	public String getEmail() {
 		return email;

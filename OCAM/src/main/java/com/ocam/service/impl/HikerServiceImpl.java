@@ -1,4 +1,4 @@
-package com.ocam.service;
+package com.ocam.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ocam.model.Hiker;
 import com.ocam.repository.HikerRepository;
+import com.ocam.service.HikerService;
 
 @Service
 public class HikerServiceImpl implements HikerService {

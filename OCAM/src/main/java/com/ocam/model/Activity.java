@@ -7,9 +7,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "ACTIVITIES")
@@ -23,6 +25,7 @@ public class Activity extends BaseEntity {
 
 	@Column(name = "START_DATE")
 	@Temporal(TemporalType.DATE)
+	@NotNull
 	private Date startDate;
 
 	@Column(name = "MAX_PLACES")
@@ -32,6 +35,7 @@ public class Activity extends BaseEntity {
 	private String password;
 	
 	@Column(name = "TRACK")
+	@NotNull
 	private String track;
 
 	@ManyToMany
@@ -41,6 +45,17 @@ public class Activity extends BaseEntity {
 	@ManyToMany
 	@JoinTable (name = "ACTIVITY_GUIDES")
 	private Set<Hiker> guides;
+	
+	@OneToMany (mappedBy="activity")
+	private Set<Report> reports;
+
+	public Set<Report> getReports() {
+		return reports;
+	}
+
+	public void setReports(Set<Report> reports) {
+		this.reports = reports;
+	}
 
 	public String getShortDescription() {
 		return shortDescription;
