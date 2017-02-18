@@ -2,39 +2,41 @@ package com.ocam.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.ocam.model.Hiker;
-import com.ocam.repository.HikerRepository;
 import com.ocam.service.HikerService;
+import com.ocam.service.impl.hiker.FindHikerByLoginPassword;
+import com.ocam.service.impl.hiker.SaveHiker;
+import com.ocam.service.impl.hiker.UpdateHiker;
 
 @Service
 public class HikerServiceImpl implements HikerService {
-	
-	private HikerRepository hikerRepository;
-	
+
+	private SaveHiker saveHiker;
+	private FindHikerByLoginPassword findHikerByLoginPassword;
+	private UpdateHiker updateHiker;
+
 	@Autowired
-	public HikerServiceImpl(HikerRepository hikerRepository) {
-		this.hikerRepository = hikerRepository;
+	public HikerServiceImpl(FindHikerByLoginPassword findHikerByLoginPassword,
+			SaveHiker saveHiker, UpdateHiker updateHiker) {
+		this.findHikerByLoginPassword = findHikerByLoginPassword;
+		this.saveHiker = saveHiker;
+		this.updateHiker = updateHiker;
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public Hiker findHikerByLoginPassword(String login, String password) {
-		return hikerRepository.findByLoginAndPassword(login, password);
+		return this.findHikerByLoginPassword.execute(login, password);
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public void updateHiker(Hiker hiker) {
-		hikerRepository.save(hiker);
+		this.saveHiker.execute(hiker);
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public void saveHiker(Hiker hiker) {
-		hikerRepository.save(hiker);		
+		this.updateHiker.execute(hiker);
 	}
 
-	
 }
