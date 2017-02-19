@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -14,9 +15,12 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@NamedQuery(name = "Activity.findLastActivityReports",
+		query = "SELECT DISTINCT(r.hiker.id), r.date FROM Report r "
+				+ "WHERE r.activity = ?1 ORDER BY r.date DESC")
 @Table(name = "ACTIVITIES")
-public class Activity extends BaseEntity {	
-	
+public class Activity extends BaseEntity {
+
 	@Column(name = "SHORT_DESCRIPTION")
 	private String shortDescription;
 
@@ -30,23 +34,23 @@ public class Activity extends BaseEntity {
 
 	@Column(name = "MAX_PLACES")
 	private Long maxPlaces;
-	
+
 	@Column(name = "JOIN_PASSWORD")
 	private String password;
-	
+
 	@Column(name = "TRACK")
 	@NotNull
 	private String track;
 
 	@ManyToMany
-	@JoinTable (name = "ACTIVITY_HIKERS")
+	@JoinTable(name = "ACTIVITY_HIKERS")
 	private Set<Hiker> hikers;
 
 	@ManyToMany
-	@JoinTable (name = "ACTIVITY_GUIDES")
+	@JoinTable(name = "ACTIVITY_GUIDES")
 	private Set<Hiker> guides;
-	
-	@OneToMany (mappedBy="activity")
+
+	@OneToMany(mappedBy = "activity")
 	private Set<Report> reports;
 
 	public Set<Report> getReports() {
@@ -120,5 +124,5 @@ public class Activity extends BaseEntity {
 	public void setGuides(Set<Hiker> guides) {
 		this.guides = guides;
 	}
-	
+
 }

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.ocam.model.Hiker;
 
 public interface HikerRepository extends JpaRepository<Hiker, Long> {
-	
+
 	Hiker findByLoginAndPassword(String name, String password);
 
 }

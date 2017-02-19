@@ -11,34 +11,38 @@ import com.ocam.model.Report;
 import com.ocam.repository.ActivityRepository;
 import com.ocam.service.ActivityService;
 import com.ocam.service.impl.activity.FindLastActivityReports;
+import com.ocam.service.impl.activity.SaveActivity;
+import com.ocam.service.impl.activity.UpdateActivity;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
 
-	private ActivityRepository activityRepository;
-	
-	private FindLastActivityReports findLastActivityReports; // Este es el command!
+	private FindLastActivityReports findLastActivityReports;
+	private SaveActivity saveActivity;
+	private UpdateActivity updateActivity;
 
 	@Autowired
-	public ActivityServiceImpl(ActivityRepository activityRepository, FindLastActivityReports findLastActivityReports) {
-		this.activityRepository = activityRepository;
+	public ActivityServiceImpl(ActivityRepository activityRepository,
+			FindLastActivityReports findLastActivityReports,
+			SaveActivity saveActivity, UpdateActivity updateActivity) {
 		this.findLastActivityReports = findLastActivityReports;
+		this.saveActivity = saveActivity;
+		this.updateActivity = updateActivity;
 	}
 
 	@Override
 	public void saveActivity(Activity activity) {
-		this.activityRepository.save(activity);
+		this.saveActivity.execute(activity);
 	}
 
 	@Override
 	public void updateActivity(Activity activity) {
-		this.activityRepository.save(activity);
+		this.updateActivity.execute(activity);
 	}
 
 	@Override
-	public Set<Report> findLastActivityReports() {
-		// return (Set<Report>) new findLastActivityReports().execute();
-		return (Set<Report>) this.findLastActivityReports.execute();
+	public Set<Object[]> findLastActivityReports(Activity activity) {
+		return this.findLastActivityReports.execute(activity);
 	}
 
 	@Override
@@ -48,7 +52,8 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public Set<Report> findActivityReportsByHiker(Activity activity, Hiker hiker) {
+	public Set<Report> findActivityReportsByHiker(Activity activity,
+			Hiker hiker) {
 		// TODO Auto-generated method stub
 		return null;
 	}
