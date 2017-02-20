@@ -1,23 +1,25 @@
 package com.ocam.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.ocam.model.types.ActivityStatus;
+
 @Entity
-@NamedQuery(name = "Activity.findLastActivityReports",
-		query = "SELECT DISTINCT(r.hiker.id), r.date FROM Report r "
-				+ "WHERE r.activity = ?1 ORDER BY r.date DESC")
+
 @Table(name = "ACTIVITIES")
 public class Activity extends BaseEntity {
 
@@ -42,16 +44,29 @@ public class Activity extends BaseEntity {
 	@NotNull
 	private String track;
 
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	@Column(name = "STATUS")
+	private ActivityStatus status;
+
 	@ManyToMany
 	@JoinTable(name = "ACTIVITY_HIKERS")
-	private Set<Hiker> hikers;
+	private Set<Hiker> hikers = new HashSet<Hiker>();
 
 	@ManyToMany
 	@JoinTable(name = "ACTIVITY_GUIDES")
-	private Set<Hiker> guides;
+	private Set<Hiker> guides = new HashSet<Hiker>();
 
 	@OneToMany(mappedBy = "activity")
-	private Set<Report> reports;
+	private Set<Report> reports = new HashSet<Report>();
+
+	public ActivityStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ActivityStatus status) {
+		this.status = status;
+	}
 
 	public Set<Report> getReports() {
 		return reports;

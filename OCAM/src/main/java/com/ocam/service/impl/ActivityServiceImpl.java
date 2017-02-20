@@ -10,6 +10,8 @@ import com.ocam.model.Hiker;
 import com.ocam.model.Report;
 import com.ocam.repository.ActivityRepository;
 import com.ocam.service.ActivityService;
+import com.ocam.service.impl.activity.FindActivityReportsByHiker;
+import com.ocam.service.impl.activity.FindAllPendingActivities;
 import com.ocam.service.impl.activity.FindLastActivityReports;
 import com.ocam.service.impl.activity.SaveActivity;
 import com.ocam.service.impl.activity.UpdateActivity;
@@ -20,14 +22,20 @@ public class ActivityServiceImpl implements ActivityService {
 	private FindLastActivityReports findLastActivityReports;
 	private SaveActivity saveActivity;
 	private UpdateActivity updateActivity;
+	private FindAllPendingActivities findAllPendingActivities;
+	private FindActivityReportsByHiker findActivityReportsByHiker;
 
 	@Autowired
 	public ActivityServiceImpl(ActivityRepository activityRepository,
 			FindLastActivityReports findLastActivityReports,
-			SaveActivity saveActivity, UpdateActivity updateActivity) {
+			SaveActivity saveActivity, UpdateActivity updateActivity,
+			FindAllPendingActivities findAllPendingActivities,
+			FindActivityReportsByHiker findActivityReportsByHiker) {
 		this.findLastActivityReports = findLastActivityReports;
 		this.saveActivity = saveActivity;
 		this.updateActivity = updateActivity;
+		this.findAllPendingActivities = findAllPendingActivities;
+		this.findActivityReportsByHiker = findActivityReportsByHiker;
 	}
 
 	@Override
@@ -41,21 +49,19 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public Set<Object[]> findLastActivityReports(Activity activity) {
+	public Set<Report> findLastActivityReports(Activity activity) {
 		return this.findLastActivityReports.execute(activity);
 	}
 
 	@Override
 	public Set<Activity> findAllPendingActivities() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.findAllPendingActivities.execute();
 	}
 
 	@Override
 	public Set<Report> findActivityReportsByHiker(Activity activity,
 			Hiker hiker) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.findActivityReportsByHiker.execute(activity, hiker);
 	}
 
 	@Override

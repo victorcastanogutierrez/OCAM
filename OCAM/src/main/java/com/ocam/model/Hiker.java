@@ -1,5 +1,6 @@
 package com.ocam.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -9,10 +10,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-@Table (name="HIKERS") 
+@Table(name = "HIKERS")
 @Entity
 public class Hiker extends BaseEntity {
-	
+
 	@Column(name = "EMAIL_ADDRESS", unique = true)
 	@NotNull
 	private String email;
@@ -20,19 +21,19 @@ public class Hiker extends BaseEntity {
 	@Column(name = "LOGIN", unique = true)
 	@NotNull
 	private String login;
-	
+
 	@Column(name = "PASSWORD")
 	@NotNull
 	private String password;
-	
-	@ManyToMany (mappedBy="hikers")
-	private Set<Activity> activities;
-	
-	@ManyToMany (mappedBy="guides")
-	private Set<Activity> activityGuide;
-	
+
+	@ManyToMany(mappedBy = "hikers")
+	private Set<Activity> activities = new HashSet<Activity>();
+
+	@ManyToMany(mappedBy = "guides")
+	private Set<Activity> activityGuide = new HashSet<Activity>();
+
 	@OneToMany(mappedBy = "hiker")
-	private Set<Report> reports;
+	private Set<Report> reports = new HashSet<Report>();
 
 	public Set<Report> getReports() {
 		return reports;

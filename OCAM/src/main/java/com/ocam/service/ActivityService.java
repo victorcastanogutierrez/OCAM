@@ -12,7 +12,7 @@ public interface ActivityService {
 
 	void updateActivity(Activity activity);
 
-	Set<Object[]> findLastActivityReports(Activity activity);
+	Set<Report> findLastActivityReports(Activity activity);
 
 	Set<Activity> findAllPendingActivities();
 

@@ -12,9 +12,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.ocam.model.types.GPSPoint;
+
 @Table(name = "REPORTS")
 @Entity
-public class Report extends BaseEntity {
+public class Report extends BaseEntity implements Comparable<Report> {
 
 	@Column(name = "DATE")
 	@NotNull
@@ -65,6 +67,11 @@ public class Report extends BaseEntity {
 
 	public void setPoint(GPSPoint point) {
 		this.point = point;
+	}
+
+	@Override
+	public int compareTo(Report o) {
+		return this.date.compareTo(o.getDate());
 	}
 
 }

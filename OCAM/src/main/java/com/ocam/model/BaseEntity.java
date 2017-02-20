@@ -8,22 +8,22 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public class BaseEntity {
-	
-    @Id
-    @Column (name="ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer id;
 
-    public Integer getId() {
-        return id;
-    }
+	@Id
+	@Column(name = "ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	protected Long id;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public boolean isNew() {
-        return (this.id == null);
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public boolean isNew() {
+		return (this.id == null);
+	}
 
 }
