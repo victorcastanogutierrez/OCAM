@@ -6,45 +6,41 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ocam.model.Activity;
 import com.ocam.model.Hiker;
-import com.ocam.model.Report;
 import com.ocam.repository.ActivityRepository;
 import com.ocam.repository.HikerRepository;
 import com.ocam.repository.ReportRepository;
 
 @Component
-public class SaveActivityReport {
+public class JoinActivityHiker {
 
 	private ActivityRepository activityRepository;
-	private ReportRepository reportRepository;
 	private HikerRepository hikerRepository;
 
 	@Autowired
-	public SaveActivityReport(ActivityRepository activityRepository,
-			ReportRepository reportRepository,
+	public JoinActivityHiker(ReportRepository reportRepository,
+			ActivityRepository activityRepository,
 			HikerRepository hikerRepository) {
 		this.activityRepository = activityRepository;
-		this.reportRepository = reportRepository;
 		this.hikerRepository = hikerRepository;
 	}
 
 	@Transactional(readOnly = false)
-	public void execute(Long activityId, Long hikerId, Report report) {
+	public void execute(Long activityId, Long hikerId) {
+
 		Activity activity = activityRepository.findOne(activityId);
 		Hiker hiker = hikerRepository.findOne(hikerId);
-		if (assertActivityNotNull(activity) && assertHikerNotNull(hiker)) {
-			report.setHiker(hiker);
-			report.setActivity(activity);
-			reportRepository.save(report);
-			hiker.getReports().add(report);
-			activity.getReports().add(report);
-		}
-	}
 
-	private Boolean assertActivityNotNull(Activity activity) {
-		return activity != null;
+		if (assertActivityNotNull(activity) && assertHikerNotNull(hiker)) {
+			activity.getHikers().add(hiker);
+			hiker.getActivities().add(activity);
+		}
 	}
 
 	private Boolean assertHikerNotNull(Hiker hiker) {
 		return hiker != null;
+	}
+
+	private Boolean assertActivityNotNull(Activity activity) {
+		return activity != null;
 	}
 }

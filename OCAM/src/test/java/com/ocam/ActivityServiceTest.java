@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ocam.model.Activity;
 import com.ocam.model.Hiker;
 import com.ocam.model.Report;
-import com.ocam.model.types.ActivityStatus;
 import com.ocam.model.types.GPSPoint;
 import com.ocam.repository.ReportRepository;
 import com.ocam.service.ActivityService;
@@ -48,7 +47,7 @@ public class ActivityServiceTest {
 	@Before
 	public void test() {
 		setUpDate();
-		initDBData();
+		testSave();
 	}
 
 	@Test
@@ -65,12 +64,12 @@ public class ActivityServiceTest {
 
 		assertEquals(2, pendingActivities.size());
 
-		activity.setStatus(ActivityStatus.CLOSED);
+		activityService.closeActivity(this.act.getId());
 		pendingActivities = activityService.findAllPendingActivities();
 
 		assertEquals(1, pendingActivities.size());
 
-		activity.setStatus(ActivityStatus.RUNNING);
+		activityService.startActivity(this.act.getId());
 		pendingActivities = activityService.findAllPendingActivities();
 
 		assertEquals(1, pendingActivities.size());
@@ -142,25 +141,28 @@ public class ActivityServiceTest {
 	}
 
 	@Transactional(readOnly = false)
-	private void initDBData() {
-		act = new Activity();
-		act.setStartDate(new Date());
-		act.setTrack("track");
+	private void testSave() {
+		this.act = new Activity();
+		this.act.setStartDate(new Date());
+		this.act.setTrack("track");
 
-		hiker = new Hiker();
-		hiker.setLogin("log1");
-		hiker.setPassword("passwd1");
-		hiker.setEmail("em1");
+		activityService.saveActivity(this.act);
+
+		this.hiker = new Hiker();
+		this.hiker.setLogin("log1");
+		this.hiker.setPassword("passwd1");
+		this.hiker.setEmail("em1");
 
 		Hiker h2 = new Hiker();
 		h2.setLogin("log2");
 		h2.setPassword("passwd2");
 		h2.setEmail("em2");
 
-		act.getHikers().add(hiker);
-		act.getHikers().add(h2);
-		hiker.getActivities().add(act);
-		h2.getActivities().add(act);
+		hikerService.saveHiker(hiker);
+		hikerService.saveHiker(h2);
+
+		activityService.JoinActivityHiker(this.act.getId(), this.hiker.getId());
+		activityService.JoinActivityHiker(this.act.getId(), h2.getId());
 
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
@@ -169,37 +171,25 @@ public class ActivityServiceTest {
 		GPSPoint gps = new GPSPoint();
 
 		Report r1 = new Report();
-		r1.setHiker(hiker);
-		r1.setActivity(act);
+		r1.setHiker(this.hiker);
 		r1.setDate(this.actualDate);
 		r1.setPoint(gps);
 
 		Report r2 = new Report();
-		r2.setHiker(hiker);
-		r2.setActivity(act);
+		r2.setHiker(this.hiker);
 		r2.setDate(date2);
 		r2.setPoint(gps);
 
 		Report r3 = new Report();
 		r3.setHiker(h2);
-		r3.setActivity(act);
 		r3.setDate(this.actualDate);
 		r3.setPoint(gps);
 
-		hiker.getReports().add(r1);
-		hiker.getReports().add(r2);
-		h2.getReports().add(r3);
-
-		act.getReports().add(r1);
-		act.getReports().add(r2);
-		act.getReports().add(r3);
-
-		hikerService.saveHiker(hiker);
-		hikerService.saveHiker(h2);
-		activityService.saveActivity(act);
-		reportRepository.save(r1);
-		reportRepository.save(r2);
-		reportRepository.save(r3);
+		activityService.saveActivityReport(this.act.getId(), this.hiker.getId(),
+				r1);
+		activityService.saveActivityReport(this.act.getId(), this.hiker.getId(),
+				r2);
+		activityService.saveActivityReport(this.act.getId(), h2.getId(), r3);
 	}
 
 }

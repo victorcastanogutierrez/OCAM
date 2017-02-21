@@ -3,7 +3,6 @@ package com.ocam.service;
 import java.util.Set;
 
 import com.ocam.model.Activity;
-import com.ocam.model.Hiker;
 import com.ocam.model.Report;
 
 public interface ActivityService {
@@ -18,12 +17,12 @@ public interface ActivityService {
 
 	Set<Report> findActivityReportsByHiker(Long activityId, Long hikerId);
 
-	void saveActivityReport(Long activityId, Report report);
+	void saveActivityReport(Long activityId, Long hikerId, Report report);
 
-	void JoinActivityHiker(Activity activity, Hiker hiker);
+	void JoinActivityHiker(Long activityId, Long hikerId);
 
-	void startActivity(Activity activity);
+	void startActivity(Long activityId);
 
-	void closeActivity(Activity activity);
+	void closeActivity(Long activityId);
 
 }

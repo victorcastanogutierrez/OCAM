@@ -6,16 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ocam.model.Activity;
-import com.ocam.model.Hiker;
 import com.ocam.model.Report;
+import com.ocam.model.types.ActivityStatus;
 import com.ocam.repository.ActivityRepository;
 import com.ocam.service.ActivityService;
 import com.ocam.service.impl.activity.FindActivityReportsByHiker;
 import com.ocam.service.impl.activity.FindAllPendingActivities;
 import com.ocam.service.impl.activity.FindLastActivityReports;
+import com.ocam.service.impl.activity.JoinActivityHiker;
 import com.ocam.service.impl.activity.SaveActivity;
 import com.ocam.service.impl.activity.SaveActivityReport;
 import com.ocam.service.impl.activity.UpdateActivity;
+import com.ocam.service.impl.activity.UpdateActivityStatus;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
@@ -26,6 +28,8 @@ public class ActivityServiceImpl implements ActivityService {
 	private FindAllPendingActivities findAllPendingActivities;
 	private FindActivityReportsByHiker findActivityReportsByHiker;
 	private SaveActivityReport saveActivityReport;
+	private JoinActivityHiker joinActivityHiker;
+	private UpdateActivityStatus updateActivityStatus;
 
 	@Autowired
 	public ActivityServiceImpl(ActivityRepository activityRepository,
@@ -33,13 +37,17 @@ public class ActivityServiceImpl implements ActivityService {
 			SaveActivity saveActivity, UpdateActivity updateActivity,
 			FindAllPendingActivities findAllPendingActivities,
 			FindActivityReportsByHiker findActivityReportsByHiker,
-			SaveActivityReport saveActivityReport) {
+			SaveActivityReport saveActivityReport,
+			JoinActivityHiker joinActivityHiker,
+			UpdateActivityStatus updateActivityStatus) {
 		this.findLastActivityReports = findLastActivityReports;
 		this.saveActivity = saveActivity;
 		this.updateActivity = updateActivity;
 		this.findAllPendingActivities = findAllPendingActivities;
 		this.findActivityReportsByHiker = findActivityReportsByHiker;
 		this.saveActivityReport = saveActivityReport;
+		this.joinActivityHiker = joinActivityHiker;
+		this.updateActivityStatus = updateActivityStatus;
 	}
 
 	@Override
@@ -69,27 +77,26 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public void saveActivityReport(Long activityId, Report report) {
-		this.saveActivityReport.execute(activityId, report);
+	public void saveActivityReport(Long activityId, Long hikerId,
+			Report report) {
+		this.saveActivityReport.execute(activityId, hikerId, report);
 
 	}
 
 	@Override
-	public void JoinActivityHiker(Activity activity, Hiker hiker) {
-		// TODO Auto-generated method stub
+	public void JoinActivityHiker(Long activityId, Long hikerId) {
+		this.joinActivityHiker.execute(activityId, hikerId);
+	}
+
+	@Override
+	public void startActivity(Long activityId) {
+		this.updateActivityStatus.execute(activityId, ActivityStatus.RUNNING);
 
 	}
 
 	@Override
-	public void startActivity(Activity activity) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void closeActivity(Activity activity) {
-		// TODO Auto-generated method stub
-
+	public void closeActivity(Long activityId) {
+		this.updateActivityStatus.execute(activityId, ActivityStatus.CLOSED);
 	}
 
 }
