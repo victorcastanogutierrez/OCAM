@@ -13,16 +13,20 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ocam.model.Activity;
 import com.ocam.model.Hiker;
 import com.ocam.model.Report;
+import com.ocam.repository.ActivityRepository;
 import com.ocam.repository.ReportRepository;
 
 @Component
 public class FindLastActivityReports {
 
 	private ReportRepository reportRepository;
+	private ActivityRepository activityRepository;
 
 	@Autowired
-	public FindLastActivityReports(ReportRepository reportRepository) {
+	public FindLastActivityReports(ReportRepository reportRepository,
+			ActivityRepository activityRepository) {
 		this.reportRepository = reportRepository;
+		this.activityRepository = activityRepository;
 	}
 
 	/**
@@ -35,7 +39,12 @@ public class FindLastActivityReports {
 	 * @return
 	 */
 	@Transactional(readOnly = true)
-	public Set<Report> execute(Activity activity) {
+	public Set<Report> execute(Long activityId) {
+		Activity activity = activityRepository.findOne(activityId);
+		if (!assertActivityNotNull(activity)) {
+			return null;
+		}
+
 		Set<Report> reports = reportRepository
 				.findAllByActivityOrderByDateDesc(activity);
 
@@ -48,5 +57,9 @@ public class FindLastActivityReports {
 		}
 
 		return result;
+	}
+
+	private Boolean assertActivityNotNull(Activity activity) {
+		return activity != null;
 	}
 }

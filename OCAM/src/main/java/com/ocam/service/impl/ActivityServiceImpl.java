@@ -14,6 +14,7 @@ import com.ocam.service.impl.activity.FindActivityReportsByHiker;
 import com.ocam.service.impl.activity.FindAllPendingActivities;
 import com.ocam.service.impl.activity.FindLastActivityReports;
 import com.ocam.service.impl.activity.SaveActivity;
+import com.ocam.service.impl.activity.SaveActivityReport;
 import com.ocam.service.impl.activity.UpdateActivity;
 
 @Service
@@ -24,18 +25,21 @@ public class ActivityServiceImpl implements ActivityService {
 	private UpdateActivity updateActivity;
 	private FindAllPendingActivities findAllPendingActivities;
 	private FindActivityReportsByHiker findActivityReportsByHiker;
+	private SaveActivityReport saveActivityReport;
 
 	@Autowired
 	public ActivityServiceImpl(ActivityRepository activityRepository,
 			FindLastActivityReports findLastActivityReports,
 			SaveActivity saveActivity, UpdateActivity updateActivity,
 			FindAllPendingActivities findAllPendingActivities,
-			FindActivityReportsByHiker findActivityReportsByHiker) {
+			FindActivityReportsByHiker findActivityReportsByHiker,
+			SaveActivityReport saveActivityReport) {
 		this.findLastActivityReports = findLastActivityReports;
 		this.saveActivity = saveActivity;
 		this.updateActivity = updateActivity;
 		this.findAllPendingActivities = findAllPendingActivities;
 		this.findActivityReportsByHiker = findActivityReportsByHiker;
+		this.saveActivityReport = saveActivityReport;
 	}
 
 	@Override
@@ -49,8 +53,8 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public Set<Report> findLastActivityReports(Activity activity) {
-		return this.findLastActivityReports.execute(activity);
+	public Set<Report> findLastActivityReports(Long activityId) {
+		return this.findLastActivityReports.execute(activityId);
 	}
 
 	@Override
@@ -59,14 +63,14 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public Set<Report> findActivityReportsByHiker(Activity activity,
-			Hiker hiker) {
-		return this.findActivityReportsByHiker.execute(activity, hiker);
+	public Set<Report> findActivityReportsByHiker(Long activityId,
+			Long hikerId) {
+		return this.findActivityReportsByHiker.execute(activityId, hikerId);
 	}
 
 	@Override
-	public void saveActivityReport(Activity activity, Report report) {
-		// TODO Auto-generated method stub
+	public void saveActivityReport(Long activityId, Report report) {
+		this.saveActivityReport.execute(activityId, report);
 
 	}
 

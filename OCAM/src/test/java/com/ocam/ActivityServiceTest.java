@@ -85,7 +85,7 @@ public class ActivityServiceTest {
 		assertEquals(1, pendingActivities.size());
 
 		Set<Report> lastReports = activityService
-				.findLastActivityReports(this.act);
+				.findLastActivityReports(this.act.getId());
 		assertEquals(2, lastReports.size());
 
 		Date actual = new Date();
@@ -93,7 +93,7 @@ public class ActivityServiceTest {
 			r.setDate(actual);
 		}
 
-		lastReports = activityService.findLastActivityReports(this.act);
+		lastReports = activityService.findLastActivityReports(this.act.getId());
 		for (Report r : lastReports) {
 			assertEquals(actual, r.getDate());
 		}
@@ -103,23 +103,26 @@ public class ActivityServiceTest {
 	@Rollback(true)
 	@Transactional(readOnly = false)
 	public void testFindActivityReportsByHiker() {
-		assertEquals(2, activityService
-				.findActivityReportsByHiker(act, this.hiker).size());
+		assertEquals(2,
+				activityService.findActivityReportsByHiker(this.act.getId(),
+						this.hiker.getId()).size());
 
 		Report r = getNewReport();
 		this.reportRepository.save(r);
 
-		Set<Report> reports = activityService.findActivityReportsByHiker(act,
-				this.hiker);
+		Set<Report> reports = activityService.findActivityReportsByHiker(
+				this.act.getId(), this.hiker.getId());
 		assertEquals(3, reports.size());
 
 		this.reportRepository.delete(reports.stream().findFirst().get());
-		assertEquals(2, activityService
-				.findActivityReportsByHiker(act, this.hiker).size());
+		assertEquals(2,
+				activityService.findActivityReportsByHiker(this.act.getId(),
+						this.hiker.getId()).size());
 
 		reports.forEach(x -> this.reportRepository.delete(x));
-		assertEquals(0, activityService
-				.findActivityReportsByHiker(act, this.hiker).size());
+		assertEquals(0,
+				activityService.findActivityReportsByHiker(this.act.getId(),
+						this.hiker.getId()).size());
 	}
 
 	private Report getNewReport() {

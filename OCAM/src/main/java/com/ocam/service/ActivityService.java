@@ -12,13 +12,13 @@ public interface ActivityService {
 
 	void updateActivity(Activity activity);
 
-	Set<Report> findLastActivityReports(Activity activity);
+	Set<Report> findLastActivityReports(Long activityId);
 
 	Set<Activity> findAllPendingActivities();
 
-	Set<Report> findActivityReportsByHiker(Activity activity, Hiker hiker);
+	Set<Report> findActivityReportsByHiker(Long activityId, Long hikerId);
 
-	void saveActivityReport(Activity activity, Report report);
+	void saveActivityReport(Long activityId, Report report);
 
 	void JoinActivityHiker(Activity activity, Hiker hiker);
 
