@@ -13,7 +13,7 @@ import com.ocam.model.Activity;
 @RestController
 public class ActivityRestController {
 
-	@RequestMapping(value = "/api/testing", method = RequestMethod.GET,
+	@RequestMapping(value = "/testing", method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Activity> greeting(
 			@RequestParam(value = "name") String name) {
