@@ -14,6 +14,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ocam.model.Hiker;
+import com.ocam.model.exception.BusinessException;
 import com.ocam.service.HikerService;
 
 @Rollback(true)
@@ -38,13 +39,17 @@ public class HikerServiceTest {
 		nhiker.setLogin(login);
 		nhiker.setPassword(passwd);
 		nhiker.setEmail(email);
-		hikerService.saveHiker(nhiker);
+		try {
+			hikerService.saveHiker(nhiker);
 
-		// Retrieves the created hiker and checks if everything is ok
-		nhiker = hikerService.findHikerByLoginPassword(login, passwd);
+			// Retrieves the created hiker and checks if everything is ok
+			nhiker = hikerService.findHikerByLoginPassword(login, passwd);
+		} catch (BusinessException e) {
+			assertNull(e);
+		}
+
 		assertNotNull(nhiker);
 		assertEquals(login, nhiker.getLogin());
-		assertEquals(passwd, nhiker.getPassword());
 		assertEquals(email, nhiker.getEmail());
 	}
 
@@ -56,30 +61,43 @@ public class HikerServiceTest {
 		nhiker.setLogin(login);
 		nhiker.setPassword(passwd);
 		nhiker.setEmail(email);
-		hikerService.saveHiker(nhiker);
+		try {
+			// Persists it
+			hikerService.saveHiker(nhiker);
 
-		// Persists it
-		nhiker = hikerService.findHikerByLoginPassword(login, passwd);
+			nhiker = hikerService.findHikerByLoginPassword(login, passwd);
+		} catch (BusinessException e) {
+			assertNull(e);
+		}
+
 		assertNotNull(nhiker);
 
 		// Updates it
 		nhiker.setLogin("log");
 		nhiker.setEmail("em");
 		nhiker.setPassword("pas");
-		hikerService.updateHiker(nhiker);
 
-		// Retrieves it again
-		nhiker = hikerService.findHikerByLoginPassword("log", "pas");
+		try {
+			hikerService.updateHiker(nhiker);
+
+			// Retrieves it again
+			nhiker = hikerService.findHikerByLoginPassword("log", "pas");
+		} catch (BusinessException e) {
+			assertNull(e);
+		}
 		assertNotNull(nhiker);
 
 		// Checks if everything is ok
 		assertNotNull(nhiker);
 		assertEquals("log", nhiker.getLogin());
-		assertEquals("pas", nhiker.getPassword());
 		assertEquals("em", nhiker.getEmail());
 
 		// Checks if it is duplicated
-		nhiker = hikerService.findHikerByLoginPassword(login, passwd);
+		try {
+			nhiker = hikerService.findHikerByLoginPassword(login, passwd);
+		} catch (BusinessException e) {
+			assertNull(e);
+		}
 		assertNull(nhiker);
 	}
 

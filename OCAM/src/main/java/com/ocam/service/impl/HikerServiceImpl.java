@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ocam.model.Hiker;
+import com.ocam.model.exception.BusinessException;
 import com.ocam.service.HikerService;
 import com.ocam.service.impl.hiker.FindHikerByLoginPassword;
 import com.ocam.service.impl.hiker.SaveHiker;
@@ -25,18 +26,19 @@ public class HikerServiceImpl implements HikerService {
 	}
 
 	@Override
-	public Hiker findHikerByLoginPassword(String login, String password) {
+	public Hiker findHikerByLoginPassword(String login, String password)
+			throws BusinessException {
 		return this.findHikerByLoginPassword.execute(login, password);
 	}
 
 	@Override
-	public void updateHiker(Hiker hiker) {
-		this.saveHiker.execute(hiker);
+	public void updateHiker(Hiker hiker) throws BusinessException {
+		this.updateHiker.execute(hiker);
 	}
 
 	@Override
-	public void saveHiker(Hiker hiker) {
-		this.updateHiker.execute(hiker);
+	public void saveHiker(Hiker hiker) throws BusinessException {
+		this.saveHiker.execute(hiker);
 	}
 
 }

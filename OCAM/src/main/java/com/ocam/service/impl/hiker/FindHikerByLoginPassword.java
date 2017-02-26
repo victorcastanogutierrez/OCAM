@@ -1,11 +1,15 @@
 package com.ocam.service.impl.hiker;
 
+import java.security.NoSuchAlgorithmException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ocam.model.Hiker;
+import com.ocam.model.exception.BusinessException;
 import com.ocam.repository.HikerRepository;
+import com.ocam.util.MD5Util;
 
 @Component
 public class FindHikerByLoginPassword {
@@ -18,8 +22,17 @@ public class FindHikerByLoginPassword {
 	}
 
 	@Transactional(readOnly = true)
-	public Hiker execute(String login, String password) {
-		return this.hikerRepository.findByLoginAndPassword(login, password);
+	public Hiker execute(String login, String password)
+			throws BusinessException {
+		String codedPassword;
+		try {
+			codedPassword = MD5Util.MD5(password);
+		} catch (NoSuchAlgorithmException e) {
+			throw new BusinessException(
+					"Error codificando la password en usuario " + login);
+		}
+		return this.hikerRepository.findByLoginAndPassword(login,
+				codedPassword);
 	}
 
 }

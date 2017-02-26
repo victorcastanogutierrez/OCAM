@@ -1,6 +1,7 @@
 package com.ocam;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ocam.model.Activity;
 import com.ocam.model.Hiker;
 import com.ocam.model.Report;
+import com.ocam.model.exception.BusinessException;
 import com.ocam.model.types.GPSPoint;
 import com.ocam.repository.ReportRepository;
 import com.ocam.service.ActivityService;
@@ -158,8 +160,12 @@ public class ActivityServiceTest {
 		h2.setPassword("passwd2");
 		h2.setEmail("em2");
 
-		hikerService.saveHiker(hiker);
-		hikerService.saveHiker(h2);
+		try {
+			hikerService.saveHiker(hiker);
+			hikerService.saveHiker(h2);
+		} catch (BusinessException e) {
+			assertNull(e);
+		}
 
 		activityService.JoinActivityHiker(this.act.getId(), this.hiker.getId());
 		activityService.JoinActivityHiker(this.act.getId(), h2.getId());
