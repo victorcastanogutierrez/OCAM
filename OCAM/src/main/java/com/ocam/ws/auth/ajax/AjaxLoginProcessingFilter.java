@@ -1,6 +1,7 @@
 package com.ocam.ws.auth.ajax;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -17,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.util.Base64Utils;
 
 import com.ocam.ws.auth.exception.AuthMethodNotSupportedException;
 
@@ -43,13 +45,16 @@ public class AjaxLoginProcessingFilter
 					"Authentication method not supported");
 		}
 
-		String username = request.getHeader("username");
-		String password = request.getHeader("password");
+		String usernameCoded = request.getHeader("username");
+		String passwordCoded = request.getHeader("password");
 
-		if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+		if (!assertUsernamePassword(usernameCoded, passwordCoded)) {
 			throw new AuthenticationServiceException(
 					"Username or Password not provided");
 		}
+
+		String username = decode64(usernameCoded);
+		String password = decode64(passwordCoded);
 
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
 				username, password);
@@ -70,5 +75,16 @@ public class AjaxLoginProcessingFilter
 			throws IOException, ServletException {
 		SecurityContextHolder.clearContext();
 		failureHandler.onAuthenticationFailure(request, response, failed);
+	}
+
+	private String decode64(String coded) {
+		return new String(Base64Utils.decodeFromString(coded),
+				StandardCharsets.UTF_8);
+	}
+
+	private boolean assertUsernamePassword(String usernameCoded,
+			String passwordCoded) {
+		return !StringUtils.isBlank(usernameCoded)
+				&& !StringUtils.isBlank(passwordCoded);
 	}
 }
