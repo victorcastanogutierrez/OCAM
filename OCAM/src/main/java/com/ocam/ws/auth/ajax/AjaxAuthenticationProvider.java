@@ -10,17 +10,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import com.ocam.model.Hiker;
-import com.ocam.repository.HikerRepository;
+import com.ocam.model.exception.BusinessException;
+import com.ocam.service.HikerService;
+import com.ocam.ws.auth.exception.DecodeDataException;
 import com.ocam.ws.auth.model.UserContext;
 
 @Component
 public class AjaxAuthenticationProvider implements AuthenticationProvider {
 
-	private final HikerRepository hikerRepository;
+	private final HikerService hikerService;
 
 	@Autowired
-	public AjaxAuthenticationProvider(final HikerRepository hikerRepository) {
-		this.hikerRepository = hikerRepository;
+	public AjaxAuthenticationProvider(final HikerService hikerService) {
+		this.hikerService = hikerService;
 	}
 
 	@Override
@@ -30,8 +32,13 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 		String username = (String) authentication.getPrincipal();
 		String password = (String) authentication.getCredentials();
 
-		Hiker hiker = hikerRepository.findByLoginAndPassword(username,
-				password);
+		Hiker hiker = null;
+		try {
+			hiker = hikerService.findHikerByLoginPassword(username, password);
+		} catch (BusinessException e) {
+			throw new DecodeDataException(e.getMessage());
+		}
+
 		if (hiker == null) {
 			throw new BadCredentialsException(
 					"Authentication Failed. Username or Password not valid.");
