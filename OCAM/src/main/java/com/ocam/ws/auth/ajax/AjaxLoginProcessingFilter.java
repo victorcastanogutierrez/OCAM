@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.util.Base64Utils;
 
 import com.ocam.ws.auth.exception.AuthMethodNotSupportedException;
+import com.ocam.ws.auth.exception.DecodeDataException;
 
 public class AjaxLoginProcessingFilter
 		extends AbstractAuthenticationProcessingFilter {
@@ -56,6 +57,11 @@ public class AjaxLoginProcessingFilter
 		String username = decode64(usernameCoded);
 		String password = decode64(passwordCoded);
 
+		if (!assertUsernamePassword(username, password)) {
+			throw new DecodeDataException(
+					"Error decoding username or password");
+		}
+
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
 				username, password);
 
@@ -78,8 +84,12 @@ public class AjaxLoginProcessingFilter
 	}
 
 	private String decode64(String coded) {
-		return new String(Base64Utils.decodeFromString(coded),
-				StandardCharsets.UTF_8);
+		try {
+			return new String(Base64Utils.decodeFromString(coded),
+					StandardCharsets.UTF_8);
+		} catch (IllegalArgumentException iex) {
+			return null;
+		}
 	}
 
 	private boolean assertUsernamePassword(String usernameCoded,

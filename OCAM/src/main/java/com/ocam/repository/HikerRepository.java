@@ -10,4 +10,6 @@ public interface HikerRepository extends JpaRepository<Hiker, Long> {
 
 	Hiker findByLogin(String login);
 
+	Hiker findByLoginOrEmail(String login, String email);
+
 }
