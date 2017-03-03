@@ -6,9 +6,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,7 +26,6 @@ import com.ocam.ws.auth.jwt.JwtTokenFactory;
 import com.ocam.ws.auth.model.RawAccessJwtToken;
 import com.ocam.ws.auth.model.RefreshToken;
 import com.ocam.ws.auth.model.UserContext;
-import com.ocam.ws.auth.util.TokenExtractor;
 import com.ocam.ws.auth.util.TokenVerifier;
 
 @RestController
@@ -37,16 +37,18 @@ public class RefreshTokenEndpoint {
 	private HikerRepository hikerRepository;
 	@Autowired
 	private TokenVerifier tokenVerifier;
-	@Autowired
-	@Qualifier("jwtHeaderTokenExtractor")
-	private TokenExtractor tokenExtractor;
 
 	@RequestMapping(value = "/api/auth/token", method = RequestMethod.GET,
 			produces = { MediaType.APPLICATION_JSON_VALUE })
 	public @ResponseBody JwtToken refreshToken(HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {
-		String tokenPayload = tokenExtractor.extract(
-				request.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM));
+
+		String tokenPayload = request
+				.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM);
+		if (StringUtils.isBlank(tokenPayload)) {
+			throw new AuthenticationServiceException(
+					"Authorization header cannot be blank!");
+		}
 
 		RawAccessJwtToken rawToken = new RawAccessJwtToken(tokenPayload);
 		RefreshToken refreshToken = RefreshToken

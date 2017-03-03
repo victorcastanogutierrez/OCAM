@@ -22,7 +22,6 @@ import com.ocam.ws.auth.ajax.AjaxLoginProcessingFilter;
 import com.ocam.ws.auth.jwt.JwtAuthenticationProvider;
 import com.ocam.ws.auth.jwt.JwtTokenAuthenticationProcessingFilter;
 import com.ocam.ws.auth.jwt.SkipPathRequestMatcher;
-import com.ocam.ws.auth.util.TokenExtractor;
 
 @Configuration
 @EnableWebSecurity
@@ -44,9 +43,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private JwtAuthenticationProvider jwtAuthenticationProvider;
 
 	@Autowired
-	private TokenExtractor tokenExtractor;
-
-	@Autowired
 	private AuthenticationManager authenticationManager;
 
 	protected AjaxLoginProcessingFilter buildAjaxLoginProcessingFilter()
@@ -64,7 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip,
 				TOKEN_BASED_AUTH_ENTRY_POINT);
 		JwtTokenAuthenticationProcessingFilter filter = new JwtTokenAuthenticationProcessingFilter(
-				failureHandler, tokenExtractor, matcher);
+				failureHandler, matcher);
 		filter.setAuthenticationManager(this.authenticationManager);
 		return filter;
 	}

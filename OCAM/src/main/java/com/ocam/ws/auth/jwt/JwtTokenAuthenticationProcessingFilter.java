@@ -7,7 +7,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,20 +20,17 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import com.ocam.ws.auth.config.WebSecurityConfig;
 import com.ocam.ws.auth.model.RawAccessJwtToken;
-import com.ocam.ws.auth.util.TokenExtractor;
 
 public class JwtTokenAuthenticationProcessingFilter
 		extends AbstractAuthenticationProcessingFilter {
 	private final AuthenticationFailureHandler failureHandler;
-	private final TokenExtractor tokenExtractor;
 
 	@Autowired
 	public JwtTokenAuthenticationProcessingFilter(
 			AuthenticationFailureHandler failureHandler,
-			TokenExtractor tokenExtractor, RequestMatcher matcher) {
+			RequestMatcher matcher) {
 		super(matcher);
 		this.failureHandler = failureHandler;
-		this.tokenExtractor = tokenExtractor;
 	}
 
 	@Override
@@ -41,10 +40,17 @@ public class JwtTokenAuthenticationProcessingFilter
 
 		String tokenPayload = request
 				.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM);
-		RawAccessJwtToken token = new RawAccessJwtToken(
-				tokenExtractor.extract(tokenPayload));
+		assertTokenValid(tokenPayload);
+		RawAccessJwtToken token = new RawAccessJwtToken(tokenPayload);
 		return getAuthenticationManager()
 				.authenticate(new JwtAuthenticationToken(token));
+	}
+
+	private void assertTokenValid(String tokenPayload) {
+		if (StringUtils.isBlank(tokenPayload)) {
+			throw new AuthenticationServiceException(
+					"Authorization header cannot be blank!");
+		}
 	}
 
 	@Override
