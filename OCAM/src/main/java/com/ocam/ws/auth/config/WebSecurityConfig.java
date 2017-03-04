@@ -28,7 +28,7 @@ import com.ocam.ws.auth.jwt.SkipPathRequestMatcher;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public static final String JWT_TOKEN_HEADER_PARAM = "ocam-token";
 	public static final String FORM_BASED_LOGIN_ENTRY_POINT = "/api/auth/login";
-	public static final String FORM_BASED_REGISTER_ENTRY_POINT = "/api/savehiker/";
+	public static final String EXISTS_HIKER_ENTRY_POINT = "/hiker/exists";
 	public static final String TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**";
 	public static final String TOKEN_REFRESH_ENTRY_POINT = "/api/auth/token";
 
@@ -56,8 +56,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	protected JwtTokenAuthenticationProcessingFilter buildJwtTokenAuthenticationProcessingFilter()
 			throws Exception {
-		List<String> pathsToSkip = Arrays.asList(TOKEN_REFRESH_ENTRY_POINT,
-				FORM_BASED_LOGIN_ENTRY_POINT, FORM_BASED_REGISTER_ENTRY_POINT);
+		List<String> pathsToSkip = Arrays.asList(EXISTS_HIKER_ENTRY_POINT,
+				TOKEN_REFRESH_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT);
 		SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip,
 				TOKEN_BASED_AUTH_ENTRY_POINT);
 		JwtTokenAuthenticationProcessingFilter filter = new JwtTokenAuthenticationProcessingFilter(

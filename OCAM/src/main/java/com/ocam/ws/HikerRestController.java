@@ -49,7 +49,7 @@ public class HikerRestController {
 	 *            builder para redireccionar
 	 * @return Redirección al servicio donde se busca el nuevo Hiker guardado
 	 */
-	@RequestMapping(value = "/api/savehiker/", method = RequestMethod.POST,
+	@RequestMapping(value = "/hiker", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> saveHiker(@RequestBody Hiker hiker,
 			UriComponentsBuilder ucBuilder) {
@@ -63,6 +63,22 @@ public class HikerRestController {
 		headers.setLocation(ucBuilder.path("/api/hiker/{login}")
 				.buildAndExpand(hiker.getLogin()).toUri());
 		return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+	}
+
+	/**
+	 * Comprueba si existe o no un nombre de usuario en el sistema
+	 * 
+	 * @param username
+	 * @return TRUE en caso de existir, FALSE en caso contrario
+	 */
+	@RequestMapping(value = "/hiker/exists/{username}",
+			method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+	public String existsHiker(@PathVariable("username") String username) {
+		Hiker hiker = hikerService.findHikerByLogin(username);
+		if (hiker == null) {
+			return Boolean.FALSE.toString();
+		}
+		return Boolean.TRUE.toString();
 	}
 
 }
