@@ -49,7 +49,7 @@ public class HikerRestController {
 	 *            builder para redireccionar
 	 * @return Redirección al servicio donde se busca el nuevo Hiker guardado
 	 */
-	@RequestMapping(value = "/api/hiker/", method = RequestMethod.POST,
+	@RequestMapping(value = "/api/savehiker/", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> saveHiker(@RequestBody Hiker hiker,
 			UriComponentsBuilder ucBuilder) {
