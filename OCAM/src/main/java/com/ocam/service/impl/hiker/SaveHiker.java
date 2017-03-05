@@ -23,10 +23,7 @@ public class SaveHiker {
 
 	@Transactional(readOnly = false)
 	public void execute(Hiker hiker) throws BusinessException {
-		if (assertHikerExists(hiker)) {
-			throw new BusinessException("Hiker con login " + hiker.getLogin()
-					+ " email " + hiker.getEmail() + " ya existe.");
-		}
+		assertHikerExists(hiker);
 
 		String passwd = hiker.getPassword();
 		String codedPassword = encryptPassword(passwd);
@@ -40,9 +37,21 @@ public class SaveHiker {
 		this.hikerRepository.save(hiker);
 	}
 
-	private boolean assertHikerExists(Hiker hiker) {
-		return hikerRepository.findByLoginOrEmail(hiker.getLogin(),
-				hiker.getEmail()) != null ? true : false;
+	private void assertHikerExists(Hiker hiker) throws BusinessException {
+		Hiker eHiker = hikerRepository.findTopByLoginOrEmail(hiker.getLogin(),
+				hiker.getEmail());
+
+		if (eHiker.getEmail().equals(hiker.getEmail())) {
+			throw new BusinessException("El email " + hiker.getEmail()
+					+ " ya está en uso por otro usuario registrado.");
+		}
+
+		if (eHiker.getLogin().equals(hiker.getLogin())) {
+			throw new BusinessException(
+					"El nombre de usuario " + hiker.getLogin()
+							+ " ya está en uso por otro usuario registrado.");
+		}
+
 	}
 
 	private String encryptPassword(String passwd) {

@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.ocam.model.Hiker;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.HikerService;
+import com.ocam.util.ApiError;
 
 @RestController
 public class HikerRestController {
@@ -47,38 +48,21 @@ public class HikerRestController {
 	 *            Objeto Hiker a guardar
 	 * @param ucBuilder
 	 *            builder para redireccionar
-	 * @return Redirección al servicio donde se busca el nuevo Hiker guardado
+	 * @return Código OK en caso de registrar el nuevo hiker
 	 */
 	@RequestMapping(value = "/hiker", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> saveHiker(@RequestBody Hiker hiker,
+	public ResponseEntity<Object> saveHiker(@RequestBody Hiker hiker,
 			UriComponentsBuilder ucBuilder) {
 		try {
 			hikerService.saveHiker(hiker);
 		} catch (BusinessException e) {
-			return new ResponseEntity<Void>(HttpStatus.UNPROCESSABLE_ENTITY);
+
+			ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
 		}
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.setLocation(ucBuilder.path("/api/hiker/{login}")
-				.buildAndExpand(hiker.getLogin()).toUri());
-		return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+		return new ResponseEntity<Object>(HttpStatus.CREATED);
 	}
-
-	/**
-	 * Comprueba si existe o no un nombre de usuario en el sistema
-	 * 
-	 * @param username
-	 * @return TRUE en caso de existir, FALSE en caso contrario
-	 */
-	@RequestMapping(value = "/hiker/exists/{username}",
-			method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	public String existsHiker(@PathVariable("username") String username) {
-		Hiker hiker = hikerService.findHikerByLogin(username);
-		if (hiker == null) {
-			return Boolean.FALSE.toString();
-		}
-		return Boolean.TRUE.toString();
-	}
-
 }
