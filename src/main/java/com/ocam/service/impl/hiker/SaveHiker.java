@@ -41,17 +41,18 @@ public class SaveHiker {
 		Hiker eHiker = hikerRepository.findTopByLoginOrEmail(hiker.getLogin(),
 				hiker.getEmail());
 
-		if (eHiker.getEmail().equals(hiker.getEmail())) {
-			throw new BusinessException("El email " + hiker.getEmail()
-					+ " ya está en uso por otro usuario registrado.");
-		}
+		if (eHiker != null) {
+			if (eHiker.getEmail().equals(hiker.getEmail())) {
+				throw new BusinessException("El email " + hiker.getEmail()
+						+ " ya está en uso por otro usuario registrado.");
+			}
 
-		if (eHiker.getLogin().equals(hiker.getLogin())) {
-			throw new BusinessException(
-					"El nombre de usuario " + hiker.getLogin()
-							+ " ya está en uso por otro usuario registrado.");
+			if (eHiker.getLogin().equals(hiker.getLogin())) {
+				throw new BusinessException("El nombre de usuario "
+						+ hiker.getLogin()
+						+ " ya está en uso por otro usuario registrado.");
+			}
 		}
-
 	}
 
 	private String encryptPassword(String passwd) {
