@@ -22,16 +22,11 @@ import com.ocam.ws.auth.ajax.AjaxLoginProcessingFilter;
 import com.ocam.ws.auth.jwt.JwtAuthenticationProvider;
 import com.ocam.ws.auth.jwt.JwtTokenAuthenticationProcessingFilter;
 import com.ocam.ws.auth.jwt.SkipPathRequestMatcher;
+import com.ocam.ws.auth.util.Constants;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	public static final String JWT_TOKEN_HEADER_PARAM = "ocam-token";
-	public static final String FORM_BASED_LOGIN_ENTRY_POINT = "/api/auth/login";
-	public static final String EXISTS_HIKER_ENTRY_POINT = "/hiker/exists";
-	public static final String TOKEN_BASED_AUTH_ENTRY_POINT = "/api/**";
-	public static final String TOKEN_REFRESH_ENTRY_POINT = "/api/auth/token";
-
 	@Autowired
 	private RestAuthenticationEntryPoint authenticationEntryPoint;
 	@Autowired
@@ -42,6 +37,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private AjaxAuthenticationProvider ajaxAuthenticationProvider;
 	@Autowired
 	private JwtAuthenticationProvider jwtAuthenticationProvider;
+	@Autowired
+	private CORSFilter filtro;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -49,17 +46,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected AjaxLoginProcessingFilter buildAjaxLoginProcessingFilter()
 			throws Exception {
 		AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(
-				FORM_BASED_LOGIN_ENTRY_POINT, successHandler, failureHandler);
+				Constants.FORM_BASED_LOGIN_ENTRY_POINT, successHandler,
+				failureHandler);
 		filter.setAuthenticationManager(this.authenticationManager);
 		return filter;
 	}
 
 	protected JwtTokenAuthenticationProcessingFilter buildJwtTokenAuthenticationProcessingFilter()
 			throws Exception {
-		List<String> pathsToSkip = Arrays.asList(EXISTS_HIKER_ENTRY_POINT,
-				TOKEN_REFRESH_ENTRY_POINT, FORM_BASED_LOGIN_ENTRY_POINT);
+		List<String> pathsToSkip = Arrays.asList(
+				Constants.EXISTS_HIKER_ENTRY_POINT,
+				Constants.TOKEN_REFRESH_ENTRY_POINT,
+				Constants.FORM_BASED_LOGIN_ENTRY_POINT);
 		SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip,
-				TOKEN_BASED_AUTH_ENTRY_POINT);
+				Constants.TOKEN_BASED_AUTH_ENTRY_POINT);
 		JwtTokenAuthenticationProcessingFilter filter = new JwtTokenAuthenticationProcessingFilter(
 				failureHandler, matcher);
 		filter.setAuthenticationManager(this.authenticationManager);
@@ -88,16 +88,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
 				.and().authorizeRequests()
-				.antMatchers(FORM_BASED_LOGIN_ENTRY_POINT).permitAll() // Login
-																		// end-point
-				.antMatchers(TOKEN_REFRESH_ENTRY_POINT).permitAll() // Token
-																	// refresh
-																	// end-point
+				.antMatchers(Constants.FORM_BASED_LOGIN_ENTRY_POINT).permitAll() // Login
+				// end-point
+				.antMatchers(Constants.TOKEN_REFRESH_ENTRY_POINT).permitAll() // Token
+				// refresh
+				// end-point
 				.and().authorizeRequests()
-				.antMatchers(TOKEN_BASED_AUTH_ENTRY_POINT).authenticated() // Protected
-																			// API
-																			// End-points
+				.antMatchers(Constants.TOKEN_BASED_AUTH_ENTRY_POINT)
+				.authenticated() // Protected
+				// API
+				// End-points
 				.and()
+				.addFilterBefore(filtro,
+						UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(buildAjaxLoginProcessingFilter(),
 						UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(buildJwtTokenAuthenticationProcessingFilter(),

@@ -18,8 +18,8 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.ocam.ws.auth.config.WebSecurityConfig;
 import com.ocam.ws.auth.model.RawAccessJwtToken;
+import com.ocam.ws.auth.util.Constants;
 
 public class JwtTokenAuthenticationProcessingFilter
 		extends AbstractAuthenticationProcessingFilter {
@@ -39,7 +39,7 @@ public class JwtTokenAuthenticationProcessingFilter
 			throws AuthenticationException, IOException, ServletException {
 
 		String tokenPayload = request
-				.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM);
+				.getHeader(Constants.JWT_TOKEN_HEADER_PARAM);
 		assertTokenValid(tokenPayload);
 		RawAccessJwtToken token = new RawAccessJwtToken(tokenPayload);
 		return getAuthenticationManager()

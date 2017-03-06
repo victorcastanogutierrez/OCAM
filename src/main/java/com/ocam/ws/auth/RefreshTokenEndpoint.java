@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ocam.model.Hiker;
 import com.ocam.repository.HikerRepository;
 import com.ocam.ws.auth.config.ConfigurationSettings;
-import com.ocam.ws.auth.config.WebSecurityConfig;
 import com.ocam.ws.auth.exception.InvalidJwtToken;
 import com.ocam.ws.auth.jwt.JwtToken;
 import com.ocam.ws.auth.jwt.JwtTokenFactory;
 import com.ocam.ws.auth.model.RawAccessJwtToken;
 import com.ocam.ws.auth.model.RefreshToken;
 import com.ocam.ws.auth.model.UserContext;
+import com.ocam.ws.auth.util.Constants;
 import com.ocam.ws.auth.util.TokenVerifier;
 
 @RestController
@@ -44,7 +44,7 @@ public class RefreshTokenEndpoint {
 			HttpServletResponse response) throws IOException, ServletException {
 
 		String tokenPayload = request
-				.getHeader(WebSecurityConfig.JWT_TOKEN_HEADER_PARAM);
+				.getHeader(Constants.JWT_TOKEN_HEADER_PARAM);
 		if (StringUtils.isBlank(tokenPayload)) {
 			throw new AuthenticationServiceException(
 					"Authorization header cannot be blank!");
