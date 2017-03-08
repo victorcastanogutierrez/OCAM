@@ -55,7 +55,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected JwtTokenAuthenticationProcessingFilter buildJwtTokenAuthenticationProcessingFilter()
 			throws Exception {
 		List<String> pathsToSkip = Arrays.asList(
-				Constants.EXISTS_HIKER_ENTRY_POINT,
 				Constants.TOKEN_REFRESH_ENTRY_POINT,
 				Constants.FORM_BASED_LOGIN_ENTRY_POINT);
 		SkipPathRequestMatcher matcher = new SkipPathRequestMatcher(pathsToSkip,
