@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ocam.model.Activity;
+import com.ocam.model.ActivityDTO;
 import com.ocam.model.Hiker;
 import com.ocam.model.Report;
 import com.ocam.model.exception.BusinessException;
@@ -60,30 +62,44 @@ public class ActivityServiceTest {
 		activity.setStartDate(new Date());
 		activity.setTrack("TrackTest");
 		activityService.saveActivity(activity);
+		ActivityDTO actDto = new ActivityDTO(Integer.MAX_VALUE, 0);
 
-		Set<Activity> pendingActivities = activityService
-				.findAllPendingActivities();
+		List<Activity> pendingActivities;
+		try {
+			pendingActivities = activityService
+					.findAllPendingActivities(actDto);
 
-		assertEquals(2, pendingActivities.size());
+			assertEquals(2, pendingActivities.size());
 
-		activityService.closeActivity(this.act.getId());
-		pendingActivities = activityService.findAllPendingActivities();
+			activityService.closeActivity(this.act.getId());
+			pendingActivities = activityService
+					.findAllPendingActivities(actDto);
 
-		assertEquals(1, pendingActivities.size());
+			assertEquals(1, pendingActivities.size());
 
-		activityService.startActivity(this.act.getId());
-		pendingActivities = activityService.findAllPendingActivities();
+			activityService.startActivity(this.act.getId());
+			pendingActivities = activityService
+					.findAllPendingActivities(actDto);
 
-		assertEquals(1, pendingActivities.size());
+			assertEquals(1, pendingActivities.size());
+		} catch (BusinessException e) {
+			assertNull(e);
+		}
 	}
 
 	@Test
 	@Rollback(true)
 	@Transactional(readOnly = false)
 	public void testFindLastActivityReports() {
-		Set<Activity> pendingActivities = activityService
-				.findAllPendingActivities();
-		assertEquals(1, pendingActivities.size());
+		ActivityDTO actDto = new ActivityDTO(Integer.MAX_VALUE, 0);
+		List<Activity> pendingActivities;
+		try {
+			pendingActivities = activityService
+					.findAllPendingActivities(actDto);
+			assertEquals(1, pendingActivities.size());
+		} catch (BusinessException e) {
+			assertNull(e);
+		}
 
 		Set<Report> lastReports = activityService
 				.findLastActivityReports(this.act.getId());
