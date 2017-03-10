@@ -1,9 +1,12 @@
 package com.ocam.service;
 
+import java.util.List;
 import java.util.Set;
 
 import com.ocam.model.Activity;
+import com.ocam.model.ActivityDTO;
 import com.ocam.model.Report;
+import com.ocam.model.exception.BusinessException;
 
 public interface ActivityService {
 
@@ -13,7 +16,8 @@ public interface ActivityService {
 
 	Set<Report> findLastActivityReports(Long activityId);
 
-	Set<Activity> findAllPendingActivities();
+	List<Activity> findAllPendingActivities(ActivityDTO criteria)
+			throws BusinessException;
 
 	Set<Report> findActivityReportsByHiker(Long activityId, Long hikerId);
 

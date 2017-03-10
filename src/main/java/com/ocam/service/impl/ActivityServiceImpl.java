@@ -1,12 +1,15 @@
 package com.ocam.service.impl;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ocam.model.Activity;
+import com.ocam.model.ActivityDTO;
 import com.ocam.model.Report;
+import com.ocam.model.exception.BusinessException;
 import com.ocam.model.types.ActivityStatus;
 import com.ocam.repository.ActivityRepository;
 import com.ocam.service.ActivityService;
@@ -66,8 +69,9 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public Set<Activity> findAllPendingActivities() {
-		return this.findAllPendingActivities.execute();
+	public List<Activity> findAllPendingActivities(ActivityDTO criteria)
+			throws BusinessException {
+		return this.findAllPendingActivities.execute(criteria);
 	}
 
 	@Override
