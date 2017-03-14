@@ -102,5 +102,4 @@ public class ActivityServiceImpl implements ActivityService {
 	public void closeActivity(Long activityId) {
 		this.updateActivityStatus.execute(activityId, ActivityStatus.CLOSED);
 	}
-
 }

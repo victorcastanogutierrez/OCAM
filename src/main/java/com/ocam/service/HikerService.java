@@ -1,6 +1,7 @@
 package com.ocam.service;
 
 import com.ocam.model.Hiker;
+import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
 
 public interface HikerService {
@@ -13,5 +14,7 @@ public interface HikerService {
 	void updateHiker(Hiker hiker) throws BusinessException;
 
 	void saveHiker(Hiker hiker) throws BusinessException;
+
+	void changePassword(HikerDTO hikerDto) throws BusinessException;
 
 }

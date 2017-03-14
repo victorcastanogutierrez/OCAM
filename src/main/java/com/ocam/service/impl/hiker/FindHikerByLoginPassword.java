@@ -24,6 +24,9 @@ public class FindHikerByLoginPassword {
 	@Transactional(readOnly = true)
 	public Hiker execute(String login, String password)
 			throws BusinessException {
+		if (!assertPasswordAndLogin(login, password)) {
+			throw new BusinessException("Login y password son requeridos");
+		}
 		String codedPassword;
 		try {
 			codedPassword = MD5Util.MD5(password);
@@ -33,6 +36,10 @@ public class FindHikerByLoginPassword {
 		}
 		return this.hikerRepository.findByLoginAndPassword(login,
 				codedPassword);
+	}
+
+	private boolean assertPasswordAndLogin(String login, String password) {
+		return login != null && password != null;
 	}
 
 }

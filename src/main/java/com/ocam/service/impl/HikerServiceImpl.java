@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ocam.model.Hiker;
+import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.HikerService;
 import com.ocam.service.impl.hiker.FindHikerByLogin;
 import com.ocam.service.impl.hiker.FindHikerByLoginPassword;
 import com.ocam.service.impl.hiker.SaveHiker;
 import com.ocam.service.impl.hiker.UpdateHiker;
+import com.ocam.service.impl.hiker.UpdateHikerPassword;
 
 @Service
 public class HikerServiceImpl implements HikerService {
@@ -18,15 +20,18 @@ public class HikerServiceImpl implements HikerService {
 	private FindHikerByLoginPassword findHikerByLoginPassword;
 	private FindHikerByLogin findHikerByLogin;
 	private UpdateHiker updateHiker;
+	private UpdateHikerPassword updateHikerPassword;
 
 	@Autowired
 	public HikerServiceImpl(FindHikerByLoginPassword findHikerByLoginPassword,
 			SaveHiker saveHiker, UpdateHiker updateHiker,
-			FindHikerByLogin findHikerByLogin) {
+			FindHikerByLogin findHikerByLogin,
+			UpdateHikerPassword updateHikerPassword) {
 		this.findHikerByLoginPassword = findHikerByLoginPassword;
 		this.findHikerByLogin = findHikerByLogin;
 		this.saveHiker = saveHiker;
 		this.updateHiker = updateHiker;
+		this.updateHikerPassword = updateHikerPassword;
 	}
 
 	@Override
@@ -50,4 +55,8 @@ public class HikerServiceImpl implements HikerService {
 		return this.findHikerByLogin.execute(login);
 	}
 
+	@Override
+	public void changePassword(HikerDTO hikerDto) throws BusinessException {
+		this.updateHikerPassword.execute(hikerDto);
+	}
 }

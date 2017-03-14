@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.ocam.model.Hiker;
+import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.HikerService;
 import com.ocam.util.ApiError;
@@ -64,5 +65,22 @@ public class HikerRestController {
 					apiError.getStatus());
 		}
 		return new ResponseEntity<Object>(HttpStatus.CREATED);
+	}
+
+	@RequestMapping(value = "/api/hiker/changePassword",
+			method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> verifyPassword(@RequestBody HikerDTO hiker) {
+
+		try {
+			hikerService.changePassword(hiker);
+		} catch (BusinessException e) {
+			ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<Object>(HttpStatus.OK);
+
 	}
 }

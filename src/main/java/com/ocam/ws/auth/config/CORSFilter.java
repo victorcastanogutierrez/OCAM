@@ -38,10 +38,10 @@ public class CORSFilter implements Filter {
 				.substring(request.getContextPath().length());
 		if (Constants.FORM_BASED_LOGIN_ENTRY_POINT.equals(path)) {
 			response.setHeader("Access-Control-Allow-Headers",
-					"Origin, X-Requested-With, Content-Type, Accept, Authorization, username, password");
+					"Origin, X-Requested-With, Content-Type, Accept, authorization, username, password");
 		} else {
 			response.setHeader("Access-Control-Allow-Headers",
-					"Origin, X-Requested-With, Content-Type, Accept, Authorization");
+					"Origin, X-Requested-With, Content-Type, Accept, authorization");
 		}
 
 		if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {

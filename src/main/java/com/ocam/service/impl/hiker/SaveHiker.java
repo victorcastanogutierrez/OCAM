@@ -27,7 +27,7 @@ public class SaveHiker {
 
 		String passwd = hiker.getPassword();
 		String codedPassword = encryptPassword(passwd);
-		if (codedPassword == null) {
+		if (assertCodedPassword(codedPassword)) {
 			throw new BusinessException(
 					"Error en la encriptación de la contraseña del usuario "
 							+ hiker.getLogin());
@@ -37,7 +37,15 @@ public class SaveHiker {
 		this.hikerRepository.save(hiker);
 	}
 
+	private boolean assertCodedPassword(String codedPassword) {
+		return codedPassword == null;
+	}
+
 	private void assertHikerExists(Hiker hiker) throws BusinessException {
+		if (hiker == null) {
+			throw new BusinessException("Datos de hiker invalidos");
+		}
+
 		Hiker eHiker = hikerRepository.findTopByLoginOrEmail(hiker.getLogin(),
 				hiker.getEmail());
 
@@ -55,11 +63,12 @@ public class SaveHiker {
 		}
 	}
 
-	private String encryptPassword(String passwd) {
+	private String encryptPassword(String passwd) throws BusinessException {
 		try {
 			return MD5Util.MD5(passwd);
 		} catch (NoSuchAlgorithmException e) {
-			return null;
+			throw new BusinessException(
+					"Ocurrió un error guardando el nuevo usuario");
 		}
 	}
 }
