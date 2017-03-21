@@ -24,9 +24,11 @@ import com.ocam.model.types.ActivityStatus;
 public class Activity extends BaseEntity {
 
 	@Column(name = "SHORT_DESCRIPTION")
+	@NotNull
 	private String shortDescription;
 
 	@Column(name = "LONG_DESCRIPTION")
+	@NotNull
 	private String longDescription;
 
 	@Column(name = "START_DATE")

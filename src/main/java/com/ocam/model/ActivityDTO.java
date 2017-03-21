@@ -11,6 +11,7 @@ public class ActivityDTO {
 
 	private Integer maxResults;
 	private Integer minResults;
+	private String track;
 
 	public ActivityDTO(Integer maxResults, Integer minResults) {
 		super();
@@ -35,5 +36,13 @@ public class ActivityDTO {
 
 	public void setMinResults(int minResults) {
 		this.minResults = minResults;
+	}
+
+	public String getTrack() {
+		return track;
+	}
+
+	public void setTrack(String track) {
+		this.track = track;
 	}
 }

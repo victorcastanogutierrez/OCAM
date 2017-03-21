@@ -10,6 +10,7 @@ import com.ocam.model.types.ActivityStatus;
 
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
-	List<Activity> findByStatus(ActivityStatus status, Pageable pageable);
+	List<Activity> findByStatusOrStatusOrderByStartDateDesc(
+			ActivityStatus status, ActivityStatus status1, Pageable pageable);
 
 }
