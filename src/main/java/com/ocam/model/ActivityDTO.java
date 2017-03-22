@@ -1,5 +1,7 @@
 package com.ocam.model;
 
+import java.util.Date;
+
 /**
  * Clase que encapsula la información para pasar datos de actividades entre
  * capas de la aplicación
@@ -8,6 +10,11 @@ package com.ocam.model;
  *
  */
 public class ActivityDTO {
+
+	private String shortDescription;
+	private String longDescription;
+	private Date startDate;
+	private Long maxPlaces;
 
 	private Integer maxResults;
 	private Integer minResults;
@@ -20,6 +27,46 @@ public class ActivityDTO {
 	}
 
 	public ActivityDTO() {
+	}
+
+	public String getShortDescription() {
+		return shortDescription;
+	}
+
+	public void setShortDescription(String shortDescription) {
+		this.shortDescription = shortDescription;
+	}
+
+	public String getLongDescription() {
+		return longDescription;
+	}
+
+	public void setLongDescription(String longDescription) {
+		this.longDescription = longDescription;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Long getMaxPlaces() {
+		return maxPlaces;
+	}
+
+	public void setMaxPlaces(Long maxPlaces) {
+		this.maxPlaces = maxPlaces;
+	}
+
+	public void setMaxResults(Integer maxResults) {
+		this.maxResults = maxResults;
+	}
+
+	public void setMinResults(Integer minResults) {
+		this.minResults = minResults;
 	}
 
 	public Integer getMaxResults() {
