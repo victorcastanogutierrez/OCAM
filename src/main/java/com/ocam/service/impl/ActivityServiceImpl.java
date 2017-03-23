@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.ocam.model.Activity;
 import com.ocam.model.ActivityDTO;
+import com.ocam.model.ActivityHikerDTO;
 import com.ocam.model.Report;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.model.types.ActivityStatus;
@@ -54,8 +55,9 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public void saveActivity(Activity activity) {
-		this.saveActivity.execute(activity);
+	public Activity saveActivity(ActivityHikerDTO activity)
+			throws BusinessException {
+		return this.saveActivity.execute(activity);
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ocam.model.Activity;
 import com.ocam.model.ActivityDTO;
+import com.ocam.model.ActivityHikerDTO;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.ActivityService;
 import com.ocam.util.ApiError;
@@ -70,11 +71,21 @@ public class ActivityRestController {
 		return new ResponseEntity<>(acts.size(), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/prueba", method = RequestMethod.POST,
+	@RequestMapping(value = "/api/activity/save", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody ResponseEntity<Object> prueba(
-			@RequestBody ActivityDTO activity) {
+	public ResponseEntity<Object> save(
+			@RequestBody ActivityHikerDTO activityHiker) {
+		Activity result = null;
+		try {
+			result = activityService.saveActivity(activityHiker);
+		} catch (BusinessException e) {
 
-		return new ResponseEntity<>(HttpStatus.OK);
+			ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<Object>(result, HttpStatus.CREATED);
 	}
+
 }

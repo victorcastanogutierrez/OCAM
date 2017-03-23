@@ -10,6 +10,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Table(name = "HIKERS")
 @Entity
 public class Hiker extends BaseEntity {
@@ -34,6 +36,18 @@ public class Hiker extends BaseEntity {
 
 	@OneToMany(mappedBy = "hiker")
 	private Set<Report> reports = new HashSet<Report>();
+
+	@OneToMany(mappedBy = "owner")
+	@JsonIgnore
+	private Set<Activity> owneds = new HashSet<Activity>();
+
+	public Set<Activity> getOwneds() {
+		return owneds;
+	}
+
+	public void setOwneds(Set<Activity> owneds) {
+		this.owneds = owneds;
+	}
 
 	public Set<Report> getReports() {
 		return reports;

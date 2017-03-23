@@ -5,12 +5,13 @@ import java.util.Set;
 
 import com.ocam.model.Activity;
 import com.ocam.model.ActivityDTO;
+import com.ocam.model.ActivityHikerDTO;
 import com.ocam.model.Report;
 import com.ocam.model.exception.BusinessException;
 
 public interface ActivityService {
 
-	void saveActivity(Activity activity);
+	Activity saveActivity(ActivityHikerDTO activity) throws BusinessException;
 
 	void updateActivity(Activity activity);
 

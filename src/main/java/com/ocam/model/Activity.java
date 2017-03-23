@@ -8,8 +8,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -42,7 +44,7 @@ public class Activity extends BaseEntity {
 	@Column(name = "JOIN_PASSWORD")
 	private String password;
 
-	@Column(name = "TRACK")
+	@Column(name = "TRACK", columnDefinition = "LONGBLOB")
 	@NotNull
 	private String track;
 
@@ -50,6 +52,10 @@ public class Activity extends BaseEntity {
 	@NotNull
 	@Column(name = "STATUS")
 	private ActivityStatus status;
+
+	@ManyToOne
+	@JoinColumn(name = "OWNER_ID")
+	private Hiker owner;
 
 	@ManyToMany
 	@JoinTable(name = "ACTIVITY_HIKERS")
@@ -61,6 +67,14 @@ public class Activity extends BaseEntity {
 
 	@OneToMany(mappedBy = "activity")
 	private Set<Report> reports = new HashSet<Report>();
+
+	public Hiker getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Hiker owner) {
+		this.owner = owner;
+	}
 
 	public ActivityStatus getStatus() {
 		return status;
