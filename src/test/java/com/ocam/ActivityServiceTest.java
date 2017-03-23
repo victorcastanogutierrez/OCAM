@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ocam.model.Activity;
 import com.ocam.model.ActivityDTO;
+import com.ocam.model.ActivityHikerDTO;
 import com.ocam.model.Hiker;
 import com.ocam.model.Report;
 import com.ocam.model.exception.BusinessException;
@@ -61,11 +62,24 @@ public class ActivityServiceTest {
 		Activity activity = new Activity();
 		activity.setStartDate(new Date());
 		activity.setTrack("TrackTest");
-		activityService.saveActivity(activity);
-		ActivityDTO actDto = new ActivityDTO(Integer.MAX_VALUE, 0);
+		activity.setLongDescription("Descripcion larga");
+		activity.setShortDescription("Descripcion corta");
+		ActivityHikerDTO act = new ActivityHikerDTO();
+		act.setActivity(activity);
 
-		List<Activity> pendingActivities;
+		Hiker h = new Hiker();
+		h.setLogin("loginT");
+		h.setPassword("passT");
+		h.setEmail("emT");
+
 		try {
+			hikerService.saveHiker(h);
+			act.setHiker(h);
+			activityService.saveActivity(act);
+			ActivityDTO actDto = new ActivityDTO(Integer.MAX_VALUE, 0);
+
+			List<Activity> pendingActivities;
+
 			pendingActivities = activityService
 					.findAllPendingActivities(actDto);
 
@@ -81,7 +95,7 @@ public class ActivityServiceTest {
 			pendingActivities = activityService
 					.findAllPendingActivities(actDto);
 
-			assertEquals(1, pendingActivities.size());
+			assertEquals(2, pendingActivities.size());
 		} catch (BusinessException e) {
 			assertNull(e);
 		}
@@ -163,8 +177,8 @@ public class ActivityServiceTest {
 		this.act = new Activity();
 		this.act.setStartDate(new Date());
 		this.act.setTrack("track");
-
-		activityService.saveActivity(this.act);
+		this.act.setLongDescription("Descripcion larga");
+		this.act.setShortDescription("Descripcion corta");
 
 		this.hiker = new Hiker();
 		this.hiker.setLogin("log1");
@@ -176,9 +190,14 @@ public class ActivityServiceTest {
 		h2.setPassword("passwd2");
 		h2.setEmail("em2");
 
+		ActivityHikerDTO act = new ActivityHikerDTO();
+		act.setActivity(this.act);
+		act.setHiker(this.hiker);
+
 		try {
 			hikerService.saveHiker(hiker);
 			hikerService.saveHiker(h2);
+			activityService.saveActivity(act);
 		} catch (BusinessException e) {
 			assertNull(e);
 		}
