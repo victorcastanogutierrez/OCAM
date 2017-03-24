@@ -8,25 +8,26 @@ import com.ocam.model.Hiker;
 import com.ocam.repository.HikerRepository;
 
 @Component
-public class FindHikerByLogin {
+public class FindHikerByEmail {
 
 	private HikerRepository hikerRepository;
 
 	@Autowired
-	public FindHikerByLogin(HikerRepository hikerRepository) {
+	public FindHikerByEmail(HikerRepository hikerRepository) {
 		this.hikerRepository = hikerRepository;
 	}
 
 	@Transactional(readOnly = true)
-	public Hiker execute(String login) {
-		if (!assertLogin(login)) {
+	public Hiker execute(String email) {
+		if (!assertEmail(email)) {
 			return null;
 		}
-		return this.hikerRepository.findByLogin(login);
+		Hiker h = this.hikerRepository.findByEmail(email);
+		return h;
 	}
 
-	private boolean assertLogin(String login) {
-		return login != null;
+	private boolean assertEmail(String email) {
+		return email != null;
 	}
 
 }

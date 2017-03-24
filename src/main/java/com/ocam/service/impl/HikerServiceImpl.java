@@ -7,6 +7,7 @@ import com.ocam.model.Hiker;
 import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.HikerService;
+import com.ocam.service.impl.hiker.FindHikerByEmail;
 import com.ocam.service.impl.hiker.FindHikerByLogin;
 import com.ocam.service.impl.hiker.FindHikerByLoginPassword;
 import com.ocam.service.impl.hiker.SaveHiker;
@@ -21,17 +22,20 @@ public class HikerServiceImpl implements HikerService {
 	private FindHikerByLogin findHikerByLogin;
 	private UpdateHiker updateHiker;
 	private UpdateHikerPassword updateHikerPassword;
+	private FindHikerByEmail findHikerByEmail;
 
 	@Autowired
 	public HikerServiceImpl(FindHikerByLoginPassword findHikerByLoginPassword,
 			SaveHiker saveHiker, UpdateHiker updateHiker,
 			FindHikerByLogin findHikerByLogin,
-			UpdateHikerPassword updateHikerPassword) {
+			UpdateHikerPassword updateHikerPassword,
+			FindHikerByEmail findHikerByEmail) {
 		this.findHikerByLoginPassword = findHikerByLoginPassword;
 		this.findHikerByLogin = findHikerByLogin;
 		this.saveHiker = saveHiker;
 		this.updateHiker = updateHiker;
 		this.updateHikerPassword = updateHikerPassword;
+		this.findHikerByEmail = findHikerByEmail;
 	}
 
 	@Override
@@ -58,5 +62,10 @@ public class HikerServiceImpl implements HikerService {
 	@Override
 	public void changePassword(HikerDTO hikerDto) throws BusinessException {
 		this.updateHikerPassword.execute(hikerDto);
+	}
+
+	@Override
+	public Hiker findHikerByEmail(String email) {
+		return this.findHikerByEmail.execute(email);
 	}
 }

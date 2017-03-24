@@ -32,6 +32,7 @@ public class Hiker extends BaseEntity {
 	private Set<Activity> activities = new HashSet<Activity>();
 
 	@ManyToMany(mappedBy = "guides")
+	@JsonIgnore
 	private Set<Activity> activityGuide = new HashSet<Activity>();
 
 	@OneToMany(mappedBy = "hiker")

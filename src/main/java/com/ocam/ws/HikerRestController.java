@@ -67,6 +67,13 @@ public class HikerRestController {
 		return new ResponseEntity<Object>(HttpStatus.CREATED);
 	}
 
+	/**
+	 * Método para cambiar la password de un hiker
+	 * 
+	 * @param hiker
+	 *            DTO con los datos del hiker y passwords
+	 * @return
+	 */
 	@RequestMapping(value = "/api/hiker/changePassword",
 			method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
@@ -82,5 +89,24 @@ public class HikerRestController {
 		}
 		return new ResponseEntity<Object>(HttpStatus.OK);
 
+	}
+
+	/**
+	 * Comprueba que un correo electrónico exista en la aplicación
+	 * 
+	 * @param email
+	 *            email del hiker que se quiere buscar
+	 * @return 200 en caso de encontrarse, 422 en caso contrario
+	 */
+	@RequestMapping(value = "/api/existshiker/{email:.+}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> findHikerByEmail(
+			@PathVariable("email") String email) {
+		Hiker hiker = hikerService.findHikerByEmail(email);
+		if (hiker == null) {
+			return new ResponseEntity<Hiker>(HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+		return new ResponseEntity<Hiker>(HttpStatus.OK);
 	}
 }

@@ -1,6 +1,8 @@
 package com.ocam.service.impl.activity;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,11 +53,34 @@ public class SaveActivity {
 			throw new BusinessException(
 					"Error procesando datos de track de la ruta");
 		}
+
+		assertGuiasActividad(activity);
+
 		activity.setOwner(hiker);
 		activity.setStatus(ActivityStatus.PENDING);
 		this.activityRepository.save(activity);
 		hiker.getOwneds().add(activity);
 		return activity;
+	}
+
+	private void assertGuiasActividad(Activity activity)
+			throws BusinessException {
+		Set<Hiker> guides = new HashSet<Hiker>(activity.getGuides());
+		activity.getGuides().clear();
+		for (Hiker h : guides) {
+			Hiker guide = hikerRepository.findByEmail(h.getEmail());
+			if (assertGuide(guide)) {
+				activity.getGuides().add(guide);
+				guide.getActivityGuide().add(activity);
+			} else {
+				throw new BusinessException(
+						"Error procesando datos de los guías");
+			}
+		}
+	}
+
+	private boolean assertGuide(Hiker guide) {
+		return guide != null;
 	}
 
 	private boolean assertTrackSize(String track)

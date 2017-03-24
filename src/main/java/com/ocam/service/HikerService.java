@@ -17,4 +17,6 @@ public interface HikerService {
 
 	void changePassword(HikerDTO hikerDto) throws BusinessException;
 
+	Hiker findHikerByEmail(String email);
+
 }
