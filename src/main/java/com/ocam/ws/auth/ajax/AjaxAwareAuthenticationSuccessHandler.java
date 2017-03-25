@@ -47,6 +47,7 @@ public class AjaxAwareAuthenticationSuccessHandler
 		Map<String, String> tokenMap = new HashMap<String, String>();
 		tokenMap.put("token", accessToken.getToken());
 		tokenMap.put("refreshToken", refreshToken.getToken());
+		tokenMap.put("email", userContext.getEmail());
 
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);

@@ -4,6 +4,7 @@ public class ActivityHikerDTO {
 
 	private Hiker hiker;
 	private Activity activity;
+	private String requestUser;
 
 	public Hiker getHiker() {
 		return hiker;
@@ -19,5 +20,13 @@ public class ActivityHikerDTO {
 
 	public void setActivity(Activity activity) {
 		this.activity = activity;
+	}
+
+	public String getRequestUser() {
+		return requestUser;
+	}
+
+	public void setRequestUser(String requestUser) {
+		this.requestUser = requestUser;
 	}
 }

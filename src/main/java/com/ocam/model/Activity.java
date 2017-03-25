@@ -53,6 +53,10 @@ public class Activity extends BaseEntity {
 	@Column(name = "STATUS")
 	private ActivityStatus status;
 
+	@NotNull
+	@Column(name = "DELETED")
+	private Boolean deleted = Boolean.FALSE;
+
 	@ManyToOne
 	@JoinColumn(name = "OWNER_ID")
 	private Hiker owner;
@@ -67,6 +71,14 @@ public class Activity extends BaseEntity {
 
 	@OneToMany(mappedBy = "activity")
 	private Set<Report> reports = new HashSet<Report>();
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
 
 	public Hiker getOwner() {
 		return owner;

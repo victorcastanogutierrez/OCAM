@@ -57,8 +57,9 @@ public class FindAllPendingActivities {
 
 		Pageable rows = new PageRequest(0, max);
 		List<Activity> activities = activityRepository
-				.findByStatusOrStatusOrderByStartDateDesc(
-						ActivityStatus.RUNNING, ActivityStatus.PENDING, rows);
+				.findByStatusOrStatusAndDeletedOrderByStartDateDesc(
+						ActivityStatus.RUNNING, ActivityStatus.PENDING,
+						Boolean.FALSE, rows);
 
 		if (min > activities.size()) {
 			return new ArrayList<Activity>();

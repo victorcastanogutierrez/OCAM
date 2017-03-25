@@ -44,7 +44,8 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 					"Authentication Failed. Username or Password not valid.");
 		}
 
-		UserContext userContext = UserContext.create(hiker.getLogin());
+		UserContext userContext = UserContext.create(hiker.getLogin(),
+				hiker.getEmail());
 
 		return new UsernamePasswordAuthenticationToken(userContext, null);
 	}

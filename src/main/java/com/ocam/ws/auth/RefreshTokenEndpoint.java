@@ -67,7 +67,8 @@ public class RefreshTokenEndpoint {
 			throw new UsernameNotFoundException("User not found: " + subject);
 		}
 
-		UserContext userContext = UserContext.create(hiker.getLogin());
+		UserContext userContext = UserContext.create(hiker.getLogin(),
+				hiker.getEmail());
 
 		return tokenFactory.createAccessJwtToken(userContext);
 	}

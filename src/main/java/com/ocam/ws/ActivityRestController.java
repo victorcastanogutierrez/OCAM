@@ -2,6 +2,8 @@ package com.ocam.ws;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import com.ocam.model.ActivityHikerDTO;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.ActivityService;
 import com.ocam.util.ApiError;
+import com.ocam.ws.auth.util.UserVerifierUtils;
 
 @RestController
 public class ActivityRestController {
@@ -53,6 +56,11 @@ public class ActivityRestController {
 		return new ResponseEntity<>(acts, HttpStatus.OK);
 	}
 
+	/**
+	 * Retorna el número total de actividades pendientes
+	 * 
+	 * @return
+	 */
 	@RequestMapping(value = "/countPendingActivities",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
@@ -71,10 +79,21 @@ public class ActivityRestController {
 		return new ResponseEntity<>(acts.size(), HttpStatus.OK);
 	}
 
+	/**
+	 * Guarda y actualiza una actividad
+	 * 
+	 * @param request
+	 * @param activityHiker
+	 * @return
+	 */
 	@RequestMapping(value = "/api/activity/save", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> save(
+	public ResponseEntity<Object> save(HttpServletRequest request,
 			@RequestBody ActivityHikerDTO activityHiker) {
+
+		String user = UserVerifierUtils.getRequestUsername(request);
+		activityHiker.setRequestUser(user);
+
 		Activity result = null;
 		try {
 			result = activityService.saveActivity(activityHiker);

@@ -30,7 +30,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 				.parseClaims(ConfigurationSettings.TOKEN_SIGNIN_KEY);
 		String subject = jwsClaims.getBody().getSubject();
 
-		UserContext context = UserContext.create(subject);
+		UserContext context = UserContext.create(subject, null);
 		logger.info("Request from user " + context.getUsername());
 		return new JwtAuthenticationToken(context);
 	}
