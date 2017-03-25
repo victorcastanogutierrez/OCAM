@@ -37,8 +37,25 @@ public class UpdateHikerPassword {
 			throw new BusinessException("Password actual incorrecta");
 		}
 
+		if (!assertHikerPermissions(hikerdto, hiker)) {
+			throw new BusinessException(
+					"Error de permisos cambiando la contraseña");
+		}
+
 		String newPassword = encryptPassword(hikerdto.getNewPassword());
 		hiker.setPassword(newPassword);
+	}
+
+	/**
+	 * Comprueba que el usuario asociado al token con el que viene la petición
+	 * coincide con el usuario que pretende cambiar su password
+	 * 
+	 * @param hikerdto
+	 * @param hiker
+	 * @return
+	 */
+	private boolean assertHikerPermissions(HikerDTO hikerdto, Hiker hiker) {
+		return hikerdto.getRequestUser().equals(hiker.getLogin());
 	}
 
 	private boolean assertPasswordActual(Hiker hiker) {

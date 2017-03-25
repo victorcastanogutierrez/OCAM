@@ -1,5 +1,7 @@
 package com.ocam.ws;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.HikerService;
 import com.ocam.util.ApiError;
+import com.ocam.ws.auth.util.UserVerifierUtils;
 
 @RestController
 public class HikerRestController {
@@ -77,7 +80,11 @@ public class HikerRestController {
 	@RequestMapping(value = "/api/hiker/changePassword",
 			method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> verifyPassword(@RequestBody HikerDTO hiker) {
+	public ResponseEntity<Object> verifyPassword(HttpServletRequest request,
+			@RequestBody HikerDTO hiker) {
+
+		String user = UserVerifierUtils.getRequestUsername(request);
+		hiker.setRequestUser(user);
 
 		try {
 			hikerService.changePassword(hiker);

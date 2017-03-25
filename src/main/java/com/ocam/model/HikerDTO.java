@@ -5,6 +5,7 @@ public class HikerDTO {
 	private String password;
 	private String username;
 	private String newPassword;
+	private String requestUser;
 
 	public HikerDTO() {
 
@@ -15,6 +16,14 @@ public class HikerDTO {
 		this.password = password;
 		this.username = username;
 		this.newPassword = newPassword;
+	}
+
+	public String getRequestUser() {
+		return requestUser;
+	}
+
+	public void setRequestUser(String requestUser) {
+		this.requestUser = requestUser;
 	}
 
 	public String getNewPassword() {
