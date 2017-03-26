@@ -50,7 +50,7 @@ public class HikerServiceImpl implements HikerService {
 	}
 
 	@Override
-	public void saveHiker(Hiker hiker) throws BusinessException {
+	public void saveHiker(HikerDTO hiker) throws BusinessException {
 		this.saveHiker.execute(hiker);
 	}
 

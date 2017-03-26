@@ -14,6 +14,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ocam.model.Hiker;
+import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.HikerService;
 
@@ -35,12 +36,15 @@ public class HikerServiceTest {
 	@Test
 	public void testHikerSave() {
 		// Creates the new hiker and persists it
-		Hiker nhiker = new Hiker();
-		nhiker.setLogin(login);
-		nhiker.setPassword(passwd);
-		nhiker.setEmail(email);
+		HikerDTO hdto = new HikerDTO();
+		hdto.setUsername(login);
+		hdto.setPassword(passwd);
+		hdto.setEmail(email);
+
+		Hiker nhiker = null;
 		try {
-			hikerService.saveHiker(nhiker);
+			hikerService.saveHiker(hdto);
+			nhiker = hikerService.findHikerByEmail(hdto.getEmail());
 
 			// Retrieves the created hiker and checks if everything is ok
 			nhiker = hikerService.findHikerByLoginPassword(login, passwd);
@@ -57,14 +61,15 @@ public class HikerServiceTest {
 	@Test
 	public void testHikerUpdate() {
 		// Creates the new hiker
-		Hiker nhiker = new Hiker();
-		nhiker.setLogin(login);
-		nhiker.setPassword(passwd);
-		nhiker.setEmail(email);
+		HikerDTO hdto = new HikerDTO();
+		hdto.setUsername(login);
+		hdto.setPassword(passwd);
+		hdto.setEmail(email);
+
+		Hiker nhiker = null;
 		try {
 			// Persists it
-			hikerService.saveHiker(nhiker);
-
+			hikerService.saveHiker(hdto);
 			nhiker = hikerService.findHikerByLoginPassword(login, passwd);
 		} catch (BusinessException e) {
 			assertNull(e);

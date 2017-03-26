@@ -1,6 +1,7 @@
 package com.ocam;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Calendar;
@@ -22,6 +23,7 @@ import com.ocam.model.Activity;
 import com.ocam.model.ActivityDTO;
 import com.ocam.model.ActivityHikerDTO;
 import com.ocam.model.Hiker;
+import com.ocam.model.HikerDTO;
 import com.ocam.model.Report;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.model.types.GPSPoint;
@@ -61,20 +63,21 @@ public class ActivityServiceTest {
 	public void testFindAllPending() {
 		Activity activity = new Activity();
 		activity.setStartDate(new Date());
-		activity.setTrack("TrackTest");
+		activity.setTrack("");
 		activity.setLongDescription("Descripcion larga");
 		activity.setShortDescription("Descripcion corta");
 		ActivityHikerDTO act = new ActivityHikerDTO();
 		act.setActivity(activity);
 
-		Hiker h = new Hiker();
-		h.setLogin("loginT");
+		HikerDTO h = new HikerDTO();
+		h.setUsername("loginT");
 		h.setPassword("passT");
 		h.setEmail("emT");
 
 		try {
 			hikerService.saveHiker(h);
-			act.setHiker(h);
+			Hiker hiker = hikerService.findHikerByLogin(h.getUsername());
+			act.setHiker(hiker);
 			activityService.saveActivity(act);
 			ActivityDTO actDto = new ActivityDTO(Integer.MAX_VALUE, 0);
 
@@ -176,27 +179,33 @@ public class ActivityServiceTest {
 	private void testSave() {
 		this.act = new Activity();
 		this.act.setStartDate(new Date());
-		this.act.setTrack("track");
+		this.act.setTrack("");
 		this.act.setLongDescription("Descripcion larga");
 		this.act.setShortDescription("Descripcion corta");
 
-		this.hiker = new Hiker();
-		this.hiker.setLogin("log1");
-		this.hiker.setPassword("passwd1");
-		this.hiker.setEmail("em1");
+		HikerDTO hdto = new HikerDTO();
+		hdto.setUsername("log1");
+		hdto.setPassword("passwd1");
+		hdto.setEmail("em1");
 
-		Hiker h2 = new Hiker();
-		h2.setLogin("log2");
-		h2.setPassword("passwd2");
-		h2.setEmail("em2");
+		HikerDTO hdto2 = new HikerDTO();
+		hdto2.setUsername("log2");
+		hdto2.setPassword("passwd2");
+		hdto2.setEmail("em2");
+
+		Hiker h2 = null;
 
 		ActivityHikerDTO act = new ActivityHikerDTO();
 		act.setActivity(this.act);
 		act.setHiker(this.hiker);
 
 		try {
-			hikerService.saveHiker(hiker);
-			hikerService.saveHiker(h2);
+			hikerService.saveHiker(hdto);
+			this.hiker = hikerService.findHikerByLogin(hdto.getUsername());
+			assertNotNull(this.hiker);
+			hikerService.saveHiker(hdto2);
+			h2 = hikerService.findHikerByLogin(hdto2.getUsername());
+			act.setHiker(this.hiker);
 			activityService.saveActivity(act);
 		} catch (BusinessException e) {
 			assertNull(e);

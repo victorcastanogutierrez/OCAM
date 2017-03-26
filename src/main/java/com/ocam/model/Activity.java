@@ -18,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ocam.model.types.ActivityStatus;
 
 @Entity
@@ -42,6 +43,7 @@ public class Activity extends BaseEntity {
 	private Long maxPlaces;
 
 	@Column(name = "JOIN_PASSWORD")
+	@JsonIgnore
 	private String password;
 
 	@Column(name = "TRACK", columnDefinition = "LONGBLOB")

@@ -30,4 +30,6 @@ public interface ActivityService {
 
 	void closeActivity(Long activityId);
 
+	void checkActivityPassword(ActivityDTO act) throws BusinessException;
+
 }

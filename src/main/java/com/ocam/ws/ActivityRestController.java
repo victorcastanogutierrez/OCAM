@@ -107,4 +107,35 @@ public class ActivityRestController {
 		return new ResponseEntity<Object>(result, HttpStatus.CREATED);
 	}
 
+	/**
+	 * Comprueba la password de una actividad
+	 * 
+	 * @param request
+	 * @param activityHiker
+	 * @return
+	 */
+	@RequestMapping(
+			value = "/api/activity/checkPassword/{activityId}/{password}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> checkActivityPassword(
+			@PathVariable("activityId") Long id,
+			@PathVariable("password") String password) {
+
+		ActivityDTO act = new ActivityDTO();
+		act.setPassword(password);
+		act.setId(id);
+
+		try {
+			activityService.checkActivityPassword(act);
+		} catch (BusinessException e) {
+
+			ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<Object>(HttpStatus.OK);
+	}
+
 }

@@ -56,7 +56,7 @@ public class HikerRestController {
 	 */
 	@RequestMapping(value = "/hiker", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> saveHiker(@RequestBody Hiker hiker,
+	public ResponseEntity<Object> saveHiker(@RequestBody HikerDTO hiker,
 			UriComponentsBuilder ucBuilder) {
 		try {
 			hikerService.saveHiker(hiker);

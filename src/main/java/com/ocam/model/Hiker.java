@@ -26,6 +26,7 @@ public class Hiker extends BaseEntity {
 
 	@Column(name = "PASSWORD")
 	@NotNull
+	@JsonIgnore
 	private String password;
 
 	@ManyToMany(mappedBy = "hikers")

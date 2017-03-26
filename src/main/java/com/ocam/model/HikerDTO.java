@@ -6,6 +6,7 @@ public class HikerDTO {
 	private String username;
 	private String newPassword;
 	private String requestUser;
+	private String email;
 
 	public HikerDTO() {
 
@@ -16,6 +17,14 @@ public class HikerDTO {
 		this.password = password;
 		this.username = username;
 		this.newPassword = newPassword;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getRequestUser() {

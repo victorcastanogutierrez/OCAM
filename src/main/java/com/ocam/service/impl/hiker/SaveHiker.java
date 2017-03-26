@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ocam.model.Hiker;
+import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.repository.HikerRepository;
 import com.ocam.util.MD5Util;
@@ -22,7 +23,7 @@ public class SaveHiker {
 	}
 
 	@Transactional(readOnly = false)
-	public void execute(Hiker hiker) throws BusinessException {
+	public void execute(HikerDTO hiker) throws BusinessException {
 		assertHikerExists(hiker);
 
 		String passwd = hiker.getPassword();
@@ -30,24 +31,32 @@ public class SaveHiker {
 		if (assertCodedPassword(codedPassword)) {
 			throw new BusinessException(
 					"Error en la encriptación de la contraseña del usuario "
-							+ hiker.getLogin());
+							+ hiker.getUsername());
 		}
-		hiker.setPassword(codedPassword);
 
-		this.hikerRepository.save(hiker);
+		Hiker h = getNewHiker(hiker, codedPassword);
+		this.hikerRepository.save(h);
+	}
+
+	private Hiker getNewHiker(HikerDTO hiker, String codedPassword) {
+		Hiker h = new Hiker();
+		h.setEmail(hiker.getEmail());
+		h.setLogin(hiker.getUsername());
+		h.setPassword(codedPassword);
+		return h;
 	}
 
 	private boolean assertCodedPassword(String codedPassword) {
 		return codedPassword == null;
 	}
 
-	private void assertHikerExists(Hiker hiker) throws BusinessException {
+	private void assertHikerExists(HikerDTO hiker) throws BusinessException {
 		if (hiker == null) {
 			throw new BusinessException("Datos de hiker invalidos");
 		}
 
-		Hiker eHiker = hikerRepository.findTopByLoginOrEmail(hiker.getLogin(),
-				hiker.getEmail());
+		Hiker eHiker = hikerRepository
+				.findTopByLoginOrEmail(hiker.getUsername(), hiker.getEmail());
 
 		if (eHiker != null) {
 			if (eHiker.getEmail().equals(hiker.getEmail())) {
@@ -55,9 +64,9 @@ public class SaveHiker {
 						+ " ya está en uso por otro usuario registrado.");
 			}
 
-			if (eHiker.getLogin().equals(hiker.getLogin())) {
+			if (eHiker.getLogin().equals(hiker.getUsername())) {
 				throw new BusinessException("El nombre de usuario "
-						+ hiker.getLogin()
+						+ hiker.getUsername()
 						+ " ya está en uso por otro usuario registrado.");
 			}
 		}

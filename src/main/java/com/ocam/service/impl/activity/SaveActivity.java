@@ -34,6 +34,11 @@ public class SaveActivity {
 			throws BusinessException {
 
 		Activity activity = activitydto.getActivity();
+		if (!assertPropietario(activitydto)) {
+			throw new BusinessException(
+					"Se debe proporcionar un propietario para la actividad");
+		}
+
 		String hLogin = activitydto.getHiker().getLogin();
 		if (!assertHikerName(hLogin)) {
 			throw new BusinessException(
@@ -66,6 +71,10 @@ public class SaveActivity {
 		this.activityRepository.save(activity);
 		hiker.getOwneds().add(activity);
 		return activity;
+	}
+
+	private boolean assertPropietario(ActivityHikerDTO activitydto) {
+		return activitydto.getHiker() != null;
 	}
 
 	/**

@@ -26,7 +26,6 @@ import com.ocam.ws.auth.model.RawAccessJwtToken;
 import com.ocam.ws.auth.model.RefreshToken;
 import com.ocam.ws.auth.model.UserContext;
 import com.ocam.ws.auth.util.Constants;
-import com.ocam.ws.auth.util.TokenVerifier;
 
 @RestController
 public class RefreshTokenEndpoint {
@@ -35,8 +34,6 @@ public class RefreshTokenEndpoint {
 	private JwtTokenFactory tokenFactory;
 	@Autowired
 	private HikerRepository hikerRepository;
-	@Autowired
-	private TokenVerifier tokenVerifier;
 
 	@RequestMapping(value = "/api/auth/token", method = RequestMethod.GET,
 			produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -54,11 +51,6 @@ public class RefreshTokenEndpoint {
 		RefreshToken refreshToken = RefreshToken
 				.create(rawToken, ConfigurationSettings.TOKEN_SIGNIN_KEY)
 				.orElseThrow(() -> new InvalidJwtToken());
-
-		String jti = refreshToken.getJti();
-		if (!tokenVerifier.verify(jti)) {
-			throw new InvalidJwtToken();
-		}
 
 		String subject = refreshToken.getSubject();
 		Hiker hiker = hikerRepository.findByLogin(subject);

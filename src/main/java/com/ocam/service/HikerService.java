@@ -13,7 +13,7 @@ public interface HikerService {
 
 	void updateHiker(Hiker hiker) throws BusinessException;
 
-	void saveHiker(Hiker hiker) throws BusinessException;
+	void saveHiker(HikerDTO hiker) throws BusinessException;
 
 	void changePassword(HikerDTO hikerDto) throws BusinessException;
 
