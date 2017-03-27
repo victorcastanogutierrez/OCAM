@@ -15,6 +15,7 @@ import com.ocam.model.types.ActivityStatus;
 import com.ocam.repository.ActivityRepository;
 import com.ocam.service.ActivityService;
 import com.ocam.service.impl.activity.CheckActivityPassword;
+import com.ocam.service.impl.activity.FindActivityById;
 import com.ocam.service.impl.activity.FindActivityReportsByHiker;
 import com.ocam.service.impl.activity.FindAllPendingActivities;
 import com.ocam.service.impl.activity.FindLastActivityReports;
@@ -36,6 +37,7 @@ public class ActivityServiceImpl implements ActivityService {
 	private JoinActivityHiker joinActivityHiker;
 	private UpdateActivityStatus updateActivityStatus;
 	private CheckActivityPassword checkActivityPassword;
+	private FindActivityById findActivityById;
 
 	@Autowired
 	public ActivityServiceImpl(ActivityRepository activityRepository,
@@ -46,7 +48,8 @@ public class ActivityServiceImpl implements ActivityService {
 			SaveActivityReport saveActivityReport,
 			JoinActivityHiker joinActivityHiker,
 			UpdateActivityStatus updateActivityStatus,
-			CheckActivityPassword checkActivityPassword) {
+			CheckActivityPassword checkActivityPassword,
+			FindActivityById findActivityById) {
 		this.findLastActivityReports = findLastActivityReports;
 		this.saveActivity = saveActivity;
 		this.updateActivity = updateActivity;
@@ -56,6 +59,7 @@ public class ActivityServiceImpl implements ActivityService {
 		this.joinActivityHiker = joinActivityHiker;
 		this.updateActivityStatus = updateActivityStatus;
 		this.checkActivityPassword = checkActivityPassword;
+		this.findActivityById = findActivityById;
 	}
 
 	@Override
@@ -113,5 +117,10 @@ public class ActivityServiceImpl implements ActivityService {
 	public void checkActivityPassword(ActivityDTO act)
 			throws BusinessException {
 		this.checkActivityPassword.execute(act);
+	}
+
+	@Override
+	public Activity findActivityById(Long id) {
+		return this.findActivityById.execute(id);
 	}
 }

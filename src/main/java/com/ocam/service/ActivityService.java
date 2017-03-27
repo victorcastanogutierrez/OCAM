@@ -32,4 +32,6 @@ public interface ActivityService {
 
 	void checkActivityPassword(ActivityDTO act) throws BusinessException;
 
+	Activity findActivityById(Long id);
+
 }

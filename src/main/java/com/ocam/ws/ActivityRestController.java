@@ -138,4 +138,16 @@ public class ActivityRestController {
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "/api/activity/{activityId}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> find(@PathVariable("activityId") Long id) {
+
+		Activity result = activityService.findActivityById(id);
+		if (result == null) {
+			return new ResponseEntity<Object>(HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+		return new ResponseEntity<Object>(result, HttpStatus.OK);
+	}
+
 }
