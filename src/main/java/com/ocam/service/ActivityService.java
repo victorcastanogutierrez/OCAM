@@ -15,7 +15,8 @@ public interface ActivityService {
 
 	void updateActivity(Activity activity);
 
-	Set<Report> findLastActivityReports(Long activityId);
+	Set<Report> findLastActivityReports(Long activityId)
+			throws BusinessException;
 
 	List<Activity> findAllPendingActivities(ActivityDTO criteria)
 			throws BusinessException;

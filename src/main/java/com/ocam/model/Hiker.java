@@ -29,6 +29,15 @@ public class Hiker extends BaseEntity {
 	@JsonIgnore
 	private String password;
 
+	@Column(name = "ACTIVE")
+	@NotNull
+	@JsonIgnore
+	private Boolean active = Boolean.FALSE;
+
+	@Column(name = "ACTIVE_CODE")
+	@JsonIgnore
+	private String active_code;
+
 	@ManyToMany(mappedBy = "hikers")
 	@JsonIgnore
 	private Set<Activity> activities = new HashSet<Activity>();
@@ -38,6 +47,7 @@ public class Hiker extends BaseEntity {
 	private Set<Activity> activityGuide = new HashSet<Activity>();
 
 	@OneToMany(mappedBy = "hiker")
+	@JsonIgnore
 	private Set<Report> reports = new HashSet<Report>();
 
 	@OneToMany(mappedBy = "owner")
@@ -98,5 +108,21 @@ public class Hiker extends BaseEntity {
 
 	public void setActivityGuide(Set<Activity> activityGuide) {
 		this.activityGuide = activityGuide;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	public String getActive_code() {
+		return active_code;
+	}
+
+	public void setActive_code(String active_code) {
+		this.active_code = active_code;
 	}
 }

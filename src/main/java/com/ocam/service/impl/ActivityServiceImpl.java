@@ -74,7 +74,8 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public Set<Report> findLastActivityReports(Long activityId) {
+	public Set<Report> findLastActivityReports(Long activityId)
+			throws BusinessException {
 		return this.findLastActivityReports.execute(activityId);
 	}
 

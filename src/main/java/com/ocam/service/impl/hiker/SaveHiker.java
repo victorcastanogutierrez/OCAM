@@ -11,6 +11,7 @@ import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.repository.HikerRepository;
 import com.ocam.util.MD5Util;
+import com.ocam.util.MailUtils;
 
 @Component
 public class SaveHiker {
@@ -24,6 +25,7 @@ public class SaveHiker {
 
 	@Transactional(readOnly = false)
 	public void execute(HikerDTO hiker) throws BusinessException {
+
 		assertHikerExists(hiker);
 
 		String passwd = hiker.getPassword();
@@ -36,6 +38,20 @@ public class SaveHiker {
 
 		Hiker h = getNewHiker(hiker, codedPassword);
 		this.hikerRepository.save(h);
+
+		if (!assertActiveHiker(hiker)) {
+			try {
+				String code = MailUtils.generateKey(h.getLogin());
+				h.setActive_code(code);
+				MailUtils.sendEmail(h.getEmail(), code);
+			} catch (NoSuchAlgorithmException e) {
+				throw new BusinessException("Error durante el registro.");
+			}
+		}
+	}
+
+	private boolean assertActiveHiker(HikerDTO hiker) {
+		return hiker.getActive();
 	}
 
 	private Hiker getNewHiker(HikerDTO hiker, String codedPassword) {

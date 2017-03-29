@@ -34,8 +34,18 @@ public class FindHikerByLoginPassword {
 			throw new BusinessException(
 					"Error codificando la password en usuario " + login);
 		}
-		return this.hikerRepository.findByLoginAndPassword(login,
+		Hiker hiker = this.hikerRepository.findByLoginAndPassword(login,
 				codedPassword);
+
+		if (!assertCuentaActiva(hiker)) {
+			throw new BusinessException(
+					"La cuenta aún no ha sido activdada! " + login);
+		}
+		return hiker;
+	}
+
+	private boolean assertCuentaActiva(Hiker hiker) {
+		return hiker.getActive();
 	}
 
 	private boolean assertPasswordAndLogin(String login, String password) {

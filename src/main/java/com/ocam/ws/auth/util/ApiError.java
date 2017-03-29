@@ -1,4 +1,4 @@
-package com.ocam.util;
+package com.ocam.ws.auth.util;
 
 import org.springframework.http.HttpStatus;
 

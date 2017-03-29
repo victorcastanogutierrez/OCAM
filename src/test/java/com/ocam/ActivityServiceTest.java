@@ -118,8 +118,13 @@ public class ActivityServiceTest {
 			assertNull(e);
 		}
 
-		Set<Report> lastReports = activityService
-				.findLastActivityReports(this.act.getId());
+		Set<Report> lastReports = null;
+		try {
+			lastReports = activityService
+					.findLastActivityReports(this.act.getId());
+		} catch (BusinessException e) {
+			assertNull(e);
+		}
 		assertEquals(2, lastReports.size());
 
 		Date actual = new Date();
@@ -127,9 +132,14 @@ public class ActivityServiceTest {
 			r.setDate(actual);
 		}
 
-		lastReports = activityService.findLastActivityReports(this.act.getId());
-		for (Report r : lastReports) {
-			assertEquals(actual, r.getDate());
+		try {
+			lastReports = activityService
+					.findLastActivityReports(this.act.getId());
+			for (Report r : lastReports) {
+				assertEquals(actual, r.getDate());
+			}
+		} catch (BusinessException e) {
+			assertNull(e);
 		}
 	}
 

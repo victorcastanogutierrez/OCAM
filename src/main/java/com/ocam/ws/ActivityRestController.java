@@ -1,6 +1,7 @@
 package com.ocam.ws;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,9 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ocam.model.Activity;
 import com.ocam.model.ActivityDTO;
 import com.ocam.model.ActivityHikerDTO;
+import com.ocam.model.Report;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.ActivityService;
-import com.ocam.util.ApiError;
+import com.ocam.ws.auth.util.ApiError;
 import com.ocam.ws.auth.util.UserVerifierUtils;
 
 @RestController
@@ -138,6 +140,12 @@ public class ActivityRestController {
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
+	/**
+	 * Devuelve una actividad buscada por ID
+	 * 
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping(value = "/api/activity/{activityId}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
@@ -150,4 +158,49 @@ public class ActivityRestController {
 		return new ResponseEntity<Object>(result, HttpStatus.OK);
 	}
 
+	/**
+	 * Devuelve los últimos reportes de cada hiker de una actividad
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/api/lastActivityReports/{activityId}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> findLastActivityReports(
+			@PathVariable("activityId") Long id) {
+
+		Set<Report> result;
+		try {
+			result = activityService.findLastActivityReports(id);
+		} catch (BusinessException e) {
+			ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	/**
+	 * Método que busca los reports de un hiker dado para una actividad dada
+	 * 
+	 * @param activityId
+	 * @param hikerId
+	 * @return
+	 */
+	@RequestMapping(value = "/api/activityHikerReports/{activityId}/{hikerId}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> findActivityHikerReports(
+			@PathVariable("activityId") Long activityId,
+			@PathVariable("hikerId") Long hikerId) {
+
+		Set<Report> reports = activityService
+				.findActivityReportsByHiker(activityId, hikerId);
+		if (reports == null) {
+			return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+		return new ResponseEntity<>(reports, HttpStatus.OK);
+	}
 }

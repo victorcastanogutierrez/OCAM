@@ -12,6 +12,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ocam.model.types.GPSPoint;
 
 @Table(name = "REPORTS")
@@ -20,12 +21,13 @@ public class Report extends BaseEntity implements Comparable<Report> {
 
 	@Column(name = "DATE")
 	@NotNull
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 
 	@ManyToOne
 	@JoinColumn(name = "ACTIVITY_ID")
 	@NotNull
+	@JsonIgnore
 	private Activity activity;
 
 	@ManyToOne

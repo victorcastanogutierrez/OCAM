@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ocam.model.Activity;
 import com.ocam.model.Hiker;
 import com.ocam.model.Report;
+import com.ocam.model.exception.BusinessException;
 import com.ocam.repository.ActivityRepository;
 import com.ocam.repository.ReportRepository;
 
@@ -37,12 +38,13 @@ public class FindLastActivityReports {
 	 * @param activity
 	 *            actividad de la cual se buscan los reportes
 	 * @return
+	 * @throws BusinessException
 	 */
 	@Transactional(readOnly = true)
-	public Set<Report> execute(Long activityId) {
+	public Set<Report> execute(Long activityId) throws BusinessException {
 		Activity activity = activityRepository.findOne(activityId);
 		if (!assertActivityNotNull(activity)) {
-			return null;
+			throw new BusinessException("Error procesando la actividad");
 		}
 
 		Set<Report> reports = reportRepository

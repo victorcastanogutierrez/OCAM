@@ -7,6 +7,7 @@ public class HikerDTO {
 	private String newPassword;
 	private String requestUser;
 	private String email;
+	private Boolean active = Boolean.FALSE;
 
 	public HikerDTO() {
 
@@ -58,4 +59,13 @@ public class HikerDTO {
 	public void setUsername(String username) {
 		this.username = username;
 	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
 }

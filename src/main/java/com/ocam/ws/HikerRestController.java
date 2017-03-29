@@ -18,7 +18,7 @@ import com.ocam.model.Hiker;
 import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.HikerService;
-import com.ocam.util.ApiError;
+import com.ocam.ws.auth.util.ApiError;
 import com.ocam.ws.auth.util.UserVerifierUtils;
 
 @RestController

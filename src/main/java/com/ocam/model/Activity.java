@@ -72,6 +72,7 @@ public class Activity extends BaseEntity {
 	private Set<Hiker> guides = new HashSet<Hiker>();
 
 	@OneToMany(mappedBy = "activity")
+	@JsonIgnore
 	private Set<Report> reports = new HashSet<Report>();
 
 	public Boolean getDeleted() {
