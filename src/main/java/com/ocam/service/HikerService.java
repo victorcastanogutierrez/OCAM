@@ -19,4 +19,6 @@ public interface HikerService {
 
 	Hiker findHikerByEmail(String email);
 
+	void validateHiker(String code) throws BusinessException;
+
 }

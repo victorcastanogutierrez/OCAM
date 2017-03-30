@@ -37,7 +37,7 @@ public class FindHikerByLoginPassword {
 		Hiker hiker = this.hikerRepository.findByLoginAndPassword(login,
 				codedPassword);
 
-		if (!assertCuentaActiva(hiker)) {
+		if (hiker != null && !assertCuentaActiva(hiker)) {
 			throw new BusinessException(
 					"La cuenta aún no ha sido activdada! " + login);
 		}

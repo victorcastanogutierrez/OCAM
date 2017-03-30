@@ -13,6 +13,7 @@ import com.ocam.service.impl.hiker.FindHikerByLoginPassword;
 import com.ocam.service.impl.hiker.SaveHiker;
 import com.ocam.service.impl.hiker.UpdateHiker;
 import com.ocam.service.impl.hiker.UpdateHikerPassword;
+import com.ocam.service.impl.hiker.ValidateHiker;
 
 @Service
 public class HikerServiceImpl implements HikerService {
@@ -23,19 +24,21 @@ public class HikerServiceImpl implements HikerService {
 	private UpdateHiker updateHiker;
 	private UpdateHikerPassword updateHikerPassword;
 	private FindHikerByEmail findHikerByEmail;
+	private ValidateHiker validateHiker;
 
 	@Autowired
 	public HikerServiceImpl(FindHikerByLoginPassword findHikerByLoginPassword,
 			SaveHiker saveHiker, UpdateHiker updateHiker,
 			FindHikerByLogin findHikerByLogin,
 			UpdateHikerPassword updateHikerPassword,
-			FindHikerByEmail findHikerByEmail) {
+			FindHikerByEmail findHikerByEmail, ValidateHiker validateHiker) {
 		this.findHikerByLoginPassword = findHikerByLoginPassword;
 		this.findHikerByLogin = findHikerByLogin;
 		this.saveHiker = saveHiker;
 		this.updateHiker = updateHiker;
 		this.updateHikerPassword = updateHikerPassword;
 		this.findHikerByEmail = findHikerByEmail;
+		this.validateHiker = validateHiker;
 	}
 
 	@Override
@@ -67,5 +70,10 @@ public class HikerServiceImpl implements HikerService {
 	@Override
 	public Hiker findHikerByEmail(String email) {
 		return this.findHikerByEmail.execute(email);
+	}
+
+	@Override
+	public void validateHiker(String code) throws BusinessException {
+		this.validateHiker.execute(code);
 	}
 }

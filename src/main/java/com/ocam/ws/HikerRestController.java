@@ -46,6 +46,28 @@ public class HikerRestController {
 	}
 
 	/**
+	 * Retorna el objeto Hiker buscándolo por el login
+	 * 
+	 * @param username
+	 *            login del hiker que se quiere buscar
+	 * @return objeto Hiker codificado en JSON. Vacío en caso de no encontrarse
+	 */
+	@RequestMapping(value = "/validateHiker", method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> validateHiker(@RequestBody HikerDTO hiker) {
+		try {
+			hikerService.validateHiker(hiker.getCode());
+		} catch (BusinessException e) {
+
+			ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<Object>(HttpStatus.OK);
+	}
+
+	/**
 	 * Guarda un nuevo Hiker en el sistema
 	 * 
 	 * @param hiker

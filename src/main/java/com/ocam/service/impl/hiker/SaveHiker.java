@@ -42,7 +42,7 @@ public class SaveHiker {
 		if (!assertActiveHiker(hiker)) {
 			try {
 				String code = MailUtils.generateKey(h.getLogin());
-				h.setActive_code(code);
+				h.setActiveCode(code);
 				MailUtils.sendEmail(h.getEmail(), code);
 			} catch (NoSuchAlgorithmException e) {
 				throw new BusinessException("Error durante el registro.");

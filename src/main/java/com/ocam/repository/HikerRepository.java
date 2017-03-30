@@ -14,4 +14,6 @@ public interface HikerRepository extends JpaRepository<Hiker, Long> {
 
 	Hiker findByEmail(String email);
 
+	Hiker findTopByActiveCodeAndActive(String ActiveCode, Boolean Active);
+
 }

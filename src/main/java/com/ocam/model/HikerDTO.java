@@ -8,6 +8,7 @@ public class HikerDTO {
 	private String requestUser;
 	private String email;
 	private Boolean active = Boolean.FALSE;
+	private String code;
 
 	public HikerDTO() {
 
@@ -18,6 +19,14 @@ public class HikerDTO {
 		this.password = password;
 		this.username = username;
 		this.newPassword = newPassword;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getEmail() {

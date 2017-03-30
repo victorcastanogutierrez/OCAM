@@ -47,7 +47,7 @@ public class MailUtils {
 
 			msg.setSubject("Confirmación de cuenta", "UTF-8");
 			msg.setText(
-					"¡Bienvenido a OCAM!<br>Para confirmar tu cuenta, por favor, sigue el siguiente enlace: "
+					"¡Bienvenido a OCAM!\n\nPara confirmar tu cuenta, por favor, sigue el siguiente enlace: http://www.ocam.com/access/"
 							+ code,
 					"UTF-8");
 			msg.setSentDate(new Date());

@@ -36,7 +36,7 @@ public class Hiker extends BaseEntity {
 
 	@Column(name = "ACTIVE_CODE")
 	@JsonIgnore
-	private String active_code;
+	private String activeCode;
 
 	@ManyToMany(mappedBy = "hikers")
 	@JsonIgnore
@@ -53,22 +53,6 @@ public class Hiker extends BaseEntity {
 	@OneToMany(mappedBy = "owner")
 	@JsonIgnore
 	private Set<Activity> owneds = new HashSet<Activity>();
-
-	public Set<Activity> getOwneds() {
-		return owneds;
-	}
-
-	public void setOwneds(Set<Activity> owneds) {
-		this.owneds = owneds;
-	}
-
-	public Set<Report> getReports() {
-		return reports;
-	}
-
-	public void setReports(Set<Report> reports) {
-		this.reports = reports;
-	}
 
 	public String getEmail() {
 		return email;
@@ -94,6 +78,22 @@ public class Hiker extends BaseEntity {
 		this.password = password;
 	}
 
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	public String getActiveCode() {
+		return activeCode;
+	}
+
+	public void setActiveCode(String activeCode) {
+		this.activeCode = activeCode;
+	}
+
 	public Set<Activity> getActivities() {
 		return activities;
 	}
@@ -110,19 +110,20 @@ public class Hiker extends BaseEntity {
 		this.activityGuide = activityGuide;
 	}
 
-	public Boolean getActive() {
-		return active;
+	public Set<Report> getReports() {
+		return reports;
 	}
 
-	public void setActive(Boolean active) {
-		this.active = active;
+	public void setReports(Set<Report> reports) {
+		this.reports = reports;
 	}
 
-	public String getActive_code() {
-		return active_code;
+	public Set<Activity> getOwneds() {
+		return owneds;
 	}
 
-	public void setActive_code(String active_code) {
-		this.active_code = active_code;
+	public void setOwneds(Set<Activity> owneds) {
+		this.owneds = owneds;
 	}
+
 }
