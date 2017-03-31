@@ -121,18 +121,18 @@ public class HikerRestController {
 	}
 
 	/**
-	 * Comprueba que un correo electrónico exista en la aplicación
+	 * Comprueba que un nombre de usuario exista en la aplicación
 	 * 
-	 * @param email
-	 *            email del hiker que se quiere buscar
+	 * @param login
+	 *            login del hiker que se quiere buscar
 	 * @return 200 en caso de encontrarse, 422 en caso contrario
 	 */
-	@RequestMapping(value = "/api/existshiker/{email:.+}",
+	@RequestMapping(value = "/api/existshiker/{login}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> findHikerByEmail(
-			@PathVariable("email") String email) {
-		Hiker hiker = hikerService.findHikerByEmail(email);
+			@PathVariable("login") String login) {
+		Hiker hiker = hikerService.findHikerByLogin(login);
 		if (hiker == null) {
 			return new ResponseEntity<Hiker>(HttpStatus.UNPROCESSABLE_ENTITY);
 		}

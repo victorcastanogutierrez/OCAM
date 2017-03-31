@@ -115,7 +115,7 @@ public class SaveActivity {
 		Set<Hiker> guides = new HashSet<Hiker>(activity.getGuides());
 		activity.getGuides().clear();
 		for (Hiker h : guides) {
-			Hiker guide = hikerRepository.findByEmail(h.getEmail());
+			Hiker guide = hikerRepository.findByLogin(h.getLogin());
 			if (assertGuide(guide) && !activity.getGuides().contains(guide)) {
 				activity.getGuides().add(guide);
 				guide.getActivityGuide().add(activity);
