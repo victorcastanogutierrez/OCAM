@@ -66,11 +66,26 @@ public class SaveActivity {
 			throw new BusinessException("Error procesando datos de los guías");
 		}
 
+		if (activity.getMide() != null && !assertMIDE(activity)) {
+			throw new BusinessException("Enlace MIDE inválido");
+		}
+
+		if (!isEditing(activity)) {
+			activity.setStatus(ActivityStatus.PENDING);
+		} else {
+			ActivityStatus status = this.activityRepository
+					.findActivityStatusById(activity.getId());
+			activity.setStatus(status);
+		}
+
 		activity.setOwner(hiker);
-		activity.setStatus(ActivityStatus.PENDING);
 		this.activityRepository.save(activity);
 		hiker.getOwneds().add(activity);
 		return activity;
+	}
+
+	private boolean assertMIDE(Activity activity) {
+		return activity.getMide().contains("mide.montanasegura.com/mide/");
 	}
 
 	private boolean assertPropietario(ActivityHikerDTO activitydto) {

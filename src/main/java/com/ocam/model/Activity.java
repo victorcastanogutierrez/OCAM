@@ -32,8 +32,10 @@ public class Activity extends BaseEntity {
 	private String shortDescription;
 
 	@Column(name = "LONG_DESCRIPTION")
-	@NotNull
 	private String longDescription;
+
+	@Column(name = "MIDE_LINK")
+	private String mide;
 
 	@Column(name = "START_DATE")
 	@Temporal(TemporalType.DATE)
@@ -47,13 +49,9 @@ public class Activity extends BaseEntity {
 	@JsonIgnore
 	private String password;
 
-	/*
-	 * @Column(name = "TRACK", columnDefinition = "LONGBLOB")
-	 * 
-	 * @NotNull private String track;
-	 */
 	@Column(name = "TRACK")
 	@Lob
+	@NotNull
 	private String track;
 
 	@Enumerated(EnumType.STRING)
@@ -177,4 +175,11 @@ public class Activity extends BaseEntity {
 		this.guides = guides;
 	}
 
+	public String getMide() {
+		return mide;
+	}
+
+	public void setMide(String mide) {
+		this.mide = mide;
+	}
 }
