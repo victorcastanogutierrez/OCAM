@@ -35,7 +35,7 @@ public class RefreshTokenEndpoint {
 	@Autowired
 	private HikerRepository hikerRepository;
 
-	@RequestMapping(value = "/api/auth/token", method = RequestMethod.GET,
+	@RequestMapping(value = "/auth/token", method = RequestMethod.GET,
 			produces = { MediaType.APPLICATION_JSON_VALUE })
 	public @ResponseBody JwtToken refreshToken(HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ServletException {

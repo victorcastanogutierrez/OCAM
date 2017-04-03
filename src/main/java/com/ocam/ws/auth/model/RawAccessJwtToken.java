@@ -41,7 +41,7 @@ public class RawAccessJwtToken implements JwtToken {
 			logger.info("Invalid JWT Token ");
 			throw new BadCredentialsException("Invalid JWT token: ", ex);
 		} catch (ExpiredJwtException expiredEx) {
-			logger.info("JWT Token is expired", expiredEx);
+			logger.info("JWT Token is expired");
 			throw new JwtExpiredTokenException(this, "JWT Token expired",
 					expiredEx);
 		}
