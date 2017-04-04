@@ -203,4 +203,29 @@ public class ActivityRestController {
 		}
 		return new ResponseEntity<>(reports, HttpStatus.OK);
 	}
+
+	/**
+	 * Devuelve las actividades pendientes encontradas entre los rangos
+	 * indicados por parámetro
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/findAllPendingRunningActivities",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ResponseEntity<?> allPendingActivities() {
+
+		List<Activity> acts;
+		try {
+			acts = activityService.findAllPendingActivities(
+					new ActivityDTO(Integer.MAX_VALUE, 0));
+		} catch (BusinessException e) {
+			ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<>(acts, HttpStatus.OK);
+	}
+
 }
