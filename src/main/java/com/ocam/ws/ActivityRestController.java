@@ -205,12 +205,11 @@ public class ActivityRestController {
 	}
 
 	/**
-	 * Devuelve las actividades pendientes encontradas entre los rangos
-	 * indicados por parámetro
+	 * Devuelve las actividades pendientes
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/findAllPendingRunningActivities",
+	@RequestMapping(value = "/api/findAllPendingRunningActivities",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody ResponseEntity<?> allPendingActivities() {
