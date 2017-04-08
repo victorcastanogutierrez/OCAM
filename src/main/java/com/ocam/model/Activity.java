@@ -20,6 +20,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ocam.model.types.ActivityStatus;
 
 @Entity
@@ -45,8 +46,13 @@ public class Activity extends BaseEntity {
 	@Column(name = "MAX_PLACES")
 	private Long maxPlaces;
 
-	@Column(name = "JOIN_PASSWORD")
+	/**
+	 * Evitamos que la password sea incluída en el objeto Activity en JSON. Con
+	 * la anotacion @JsonProperty en el setter, sí lee objetos Activity que
+	 * vengan con la propiedad
+	 */
 	@JsonIgnore
+	@Column(name = "JOIN_PASSWORD")
 	private String password;
 
 	@Column(name = "TRACK")
@@ -143,10 +149,12 @@ public class Activity extends BaseEntity {
 		this.maxPlaces = maxPlaces;
 	}
 
+	@JsonIgnore
 	public String getPassword() {
 		return password;
 	}
 
+	@JsonProperty
 	public void setPassword(String password) {
 		this.password = password;
 	}

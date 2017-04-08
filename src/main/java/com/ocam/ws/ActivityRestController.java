@@ -227,4 +227,21 @@ public class ActivityRestController {
 		return new ResponseEntity<>(acts, HttpStatus.OK);
 	}
 
+	@RequestMapping(value = "/api/startActivity", method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> startActivity(@RequestBody Activity activityDTO) {
+
+		try {
+			System.out.println(activityDTO.getPassword());
+			activityService.startActivity(activityDTO.getId(),
+					activityDTO.getPassword());
+		} catch (BusinessException e) {
+			ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
 }

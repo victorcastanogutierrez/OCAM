@@ -27,7 +27,8 @@ public interface ActivityService {
 
 	void JoinActivityHiker(Long activityId, Long hikerId);
 
-	void startActivity(Long activityId);
+	void startActivity(Long activityId, String password)
+			throws BusinessException;
 
 	void closeActivity(Long activityId);
 

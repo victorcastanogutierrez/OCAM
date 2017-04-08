@@ -22,6 +22,7 @@ import com.ocam.service.impl.activity.FindLastActivityReports;
 import com.ocam.service.impl.activity.JoinActivityHiker;
 import com.ocam.service.impl.activity.SaveActivity;
 import com.ocam.service.impl.activity.SaveActivityReport;
+import com.ocam.service.impl.activity.StartActivity;
 import com.ocam.service.impl.activity.UpdateActivity;
 import com.ocam.service.impl.activity.UpdateActivityStatus;
 
@@ -38,6 +39,7 @@ public class ActivityServiceImpl implements ActivityService {
 	private UpdateActivityStatus updateActivityStatus;
 	private CheckActivityPassword checkActivityPassword;
 	private FindActivityById findActivityById;
+	private StartActivity startActivity;
 
 	@Autowired
 	public ActivityServiceImpl(ActivityRepository activityRepository,
@@ -49,7 +51,7 @@ public class ActivityServiceImpl implements ActivityService {
 			JoinActivityHiker joinActivityHiker,
 			UpdateActivityStatus updateActivityStatus,
 			CheckActivityPassword checkActivityPassword,
-			FindActivityById findActivityById) {
+			FindActivityById findActivityById, StartActivity startActivity) {
 		this.findLastActivityReports = findLastActivityReports;
 		this.saveActivity = saveActivity;
 		this.updateActivity = updateActivity;
@@ -60,6 +62,7 @@ public class ActivityServiceImpl implements ActivityService {
 		this.updateActivityStatus = updateActivityStatus;
 		this.checkActivityPassword = checkActivityPassword;
 		this.findActivityById = findActivityById;
+		this.startActivity = startActivity;
 	}
 
 	@Override
@@ -104,9 +107,9 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public void startActivity(Long activityId) {
-		this.updateActivityStatus.execute(activityId, ActivityStatus.RUNNING);
-
+	public void startActivity(Long activityId, String password)
+			throws BusinessException {
+		this.startActivity.execute(activityId, password);
 	}
 
 	@Override
