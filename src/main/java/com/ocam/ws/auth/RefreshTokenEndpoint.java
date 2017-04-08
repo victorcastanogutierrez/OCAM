@@ -72,7 +72,7 @@ public class RefreshTokenEndpoint {
 		responseMap.put("token", newToken.getToken());
 		responseMap.put("refreshToken", tokenPayload);
 		responseMap.put("email", hiker.getEmail());
-		responseMap.put("username", hiker.getLogin());
+		responseMap.put("login", hiker.getLogin());
 
 		return new ResponseEntity<Object>(responseMap, HttpStatus.OK);
 	}
