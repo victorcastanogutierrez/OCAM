@@ -277,7 +277,10 @@ public class ActivityRestController {
 		try {
 			activityService.joinActivityHiker(activityId, login);
 		} catch (BusinessException e) {
-			return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+			ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

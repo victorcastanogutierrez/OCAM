@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ocam.model.Activity;
 import com.ocam.model.Hiker;
 import com.ocam.model.exception.BusinessException;
+import com.ocam.model.types.ActivityStatus;
 import com.ocam.repository.ActivityRepository;
 import com.ocam.repository.HikerRepository;
 
@@ -43,8 +44,28 @@ public class JoinActivityHiker {
 					"El Hiker ya se encuentra como participante");
 		}
 
+		if (!assertUniqueActivity(hiker)) {
+			throw new BusinessException(
+					"Ya estás unido en una actividad que está en curso.");
+		}
+
 		activity.getHikers().add(hiker);
 		hiker.getActivities().add(activity);
+	}
+
+	/**
+	 * Comprueba que no esté unido en una actividad que esté en curso.
+	 * 
+	 * @param hiker
+	 * @return
+	 */
+	private Boolean assertUniqueActivity(Hiker hiker) {
+		for (Activity act : hiker.getActivities()) {
+			if (ActivityStatus.RUNNING.equals(act.getStatus())) {
+				return Boolean.FALSE;
+			}
+		}
+		return Boolean.TRUE;
 	}
 
 	private Boolean assertHikerJoined(Activity activity, Hiker hiker) {
