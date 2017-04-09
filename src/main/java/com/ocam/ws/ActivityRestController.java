@@ -244,4 +244,27 @@ public class ActivityRestController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	@RequestMapping(
+			value = "/api/updateActivityPassword/{activityId}/{password}",
+			method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> updateActivityPassword(HttpServletRequest request,
+			@PathVariable("activityId") Long activityId,
+			@PathVariable("password") String password) {
+
+		String user = UserVerifierUtils.getRequestUsername(request);
+		ActivityHikerDTO act = new ActivityHikerDTO();
+		act.setActivity(new Activity());
+		act.getActivity().setId(activityId);
+		act.getActivity().setPassword(password);
+		act.setRequestUser(user);
+
+		try {
+			activityService.updateActivityPassword(act);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+	}
+
 }

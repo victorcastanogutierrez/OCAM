@@ -36,4 +36,6 @@ public interface ActivityService {
 
 	Activity findActivityById(Long id);
 
+	void updateActivityPassword(ActivityHikerDTO act) throws BusinessException;
+
 }
