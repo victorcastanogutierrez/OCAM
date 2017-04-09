@@ -221,8 +221,13 @@ public class ActivityServiceTest {
 			assertNull(e);
 		}
 
-		activityService.JoinActivityHiker(this.act.getId(), this.hiker.getId());
-		activityService.JoinActivityHiker(this.act.getId(), h2.getId());
+		try {
+			activityService.joinActivityHiker(this.act.getId(),
+					this.hiker.getLogin());
+			activityService.joinActivityHiker(this.act.getId(), h2.getLogin());
+		} catch (BusinessException e) {
+			assertNotNull(e);
+		}
 
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());

@@ -267,4 +267,19 @@ public class ActivityRestController {
 		}
 	}
 
+	@RequestMapping(value = "/api/joinActivity/{activityId}/{login}",
+			method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> joinActivity(
+			@PathVariable("activityId") Long activityId,
+			@PathVariable("login") String login) {
+
+		try {
+			activityService.joinActivityHiker(activityId, login);
+		} catch (BusinessException e) {
+			return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
 }

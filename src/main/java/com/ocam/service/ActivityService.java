@@ -25,7 +25,8 @@ public interface ActivityService {
 
 	void saveActivityReport(Long activityId, Long hikerId, Report report);
 
-	void JoinActivityHiker(Long activityId, Long hikerId);
+	void joinActivityHiker(Long activityId, String login)
+			throws BusinessException;
 
 	void startActivity(Long activityId, String password)
 			throws BusinessException;

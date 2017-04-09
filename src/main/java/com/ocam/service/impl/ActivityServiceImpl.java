@@ -106,8 +106,9 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public void JoinActivityHiker(Long activityId, Long hikerId) {
-		this.joinActivityHiker.execute(activityId, hikerId);
+	public void joinActivityHiker(Long activityId, String login)
+			throws BusinessException {
+		this.joinActivityHiker.execute(activityId, login);
 	}
 
 	@Override
