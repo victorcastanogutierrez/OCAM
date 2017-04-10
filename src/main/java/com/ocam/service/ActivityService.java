@@ -6,6 +6,7 @@ import java.util.Set;
 import com.ocam.model.Activity;
 import com.ocam.model.ActivityDTO;
 import com.ocam.model.ActivityHikerDTO;
+import com.ocam.model.Hiker;
 import com.ocam.model.Report;
 import com.ocam.model.exception.BusinessException;
 
@@ -38,5 +39,7 @@ public interface ActivityService {
 	Activity findActivityById(Long id);
 
 	void updateActivityPassword(ActivityHikerDTO act) throws BusinessException;
+
+	List<Hiker> findActivityHikers(Long activityId) throws BusinessException;
 
 }

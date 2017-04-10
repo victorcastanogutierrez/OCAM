@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.ocam.model.Activity;
 import com.ocam.model.ActivityDTO;
 import com.ocam.model.ActivityHikerDTO;
+import com.ocam.model.Hiker;
 import com.ocam.model.Report;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.model.types.ActivityStatus;
@@ -16,6 +17,7 @@ import com.ocam.repository.ActivityRepository;
 import com.ocam.service.ActivityService;
 import com.ocam.service.impl.activity.CheckActivityPassword;
 import com.ocam.service.impl.activity.FindActivityById;
+import com.ocam.service.impl.activity.FindActivityHikers;
 import com.ocam.service.impl.activity.FindActivityReportsByHiker;
 import com.ocam.service.impl.activity.FindAllPendingActivities;
 import com.ocam.service.impl.activity.FindLastActivityReports;
@@ -42,6 +44,7 @@ public class ActivityServiceImpl implements ActivityService {
 	private FindActivityById findActivityById;
 	private StartActivity startActivity;
 	private UpdateActivityPassword updateActivityPassword;
+	private FindActivityHikers findActivityHikers;
 
 	@Autowired
 	public ActivityServiceImpl(ActivityRepository activityRepository,
@@ -54,7 +57,8 @@ public class ActivityServiceImpl implements ActivityService {
 			UpdateActivityStatus updateActivityStatus,
 			CheckActivityPassword checkActivityPassword,
 			FindActivityById findActivityById, StartActivity startActivity,
-			UpdateActivityPassword updateActivityPassword) {
+			UpdateActivityPassword updateActivityPassword,
+			FindActivityHikers findActivityHikers) {
 		this.findLastActivityReports = findLastActivityReports;
 		this.saveActivity = saveActivity;
 		this.updateActivity = updateActivity;
@@ -67,6 +71,7 @@ public class ActivityServiceImpl implements ActivityService {
 		this.findActivityById = findActivityById;
 		this.startActivity = startActivity;
 		this.updateActivityPassword = updateActivityPassword;
+		this.findActivityHikers = findActivityHikers;
 	}
 
 	@Override
@@ -138,5 +143,11 @@ public class ActivityServiceImpl implements ActivityService {
 			throws BusinessException {
 		this.updateActivityPassword.execute(act);
 
+	}
+
+	@Override
+	public List<Hiker> findActivityHikers(Long activityId)
+			throws BusinessException {
+		return this.findActivityHikers.execute(activityId);
 	}
 }

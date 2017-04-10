@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ocam.model.Activity;
 import com.ocam.model.ActivityDTO;
 import com.ocam.model.ActivityHikerDTO;
+import com.ocam.model.Hiker;
 import com.ocam.model.Report;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.ActivityService;
@@ -283,6 +284,24 @@ public class ActivityRestController {
 					apiError.getStatus());
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/api/findActivityHikers/{activityId}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> joinActivity(
+			@PathVariable("activityId") Long activityId) {
+
+		List<Hiker> result;
+		try {
+			result = activityService.findActivityHikers(activityId);
+		} catch (BusinessException e) {
+			ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 }
