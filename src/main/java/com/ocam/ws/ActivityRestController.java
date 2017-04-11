@@ -233,7 +233,6 @@ public class ActivityRestController {
 	public ResponseEntity<?> startActivity(@RequestBody Activity activityDTO) {
 
 		try {
-			System.out.println(activityDTO.getPassword());
 			activityService.startActivity(activityDTO.getId(),
 					activityDTO.getPassword());
 		} catch (BusinessException e) {
@@ -302,6 +301,23 @@ public class ActivityRestController {
 					apiError.getStatus());
 		}
 		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/api/closeActivity/{activityId}",
+			method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> closeActivity(
+			@PathVariable("activityId") Long activityId) {
+
+		try {
+			activityService.closeActivity(activityId);
+		} catch (BusinessException e) {
+			ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

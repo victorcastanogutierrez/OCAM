@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ocam.model.Activity;
+import com.ocam.model.exception.BusinessException;
 import com.ocam.model.types.ActivityStatus;
 import com.ocam.repository.ActivityRepository;
 
@@ -18,14 +19,22 @@ public class UpdateActivityStatus {
 		this.activityRepository = activityRepository;
 	}
 
-	@Transactional(readOnly = true)
-	public void execute(Long activityId, ActivityStatus activityStatus) {
+	@Transactional(readOnly = false)
+	public void execute(Long activityId, ActivityStatus activityStatus)
+			throws BusinessException {
 
 		Activity activity = activityRepository.findOne(activityId);
 
-		if (assertActivityNotNull(activity)) {
+		if (assertActivityNotNull(activity)
+				&& assertActivityNotRemoved(activity)) {
 			activity.setStatus(activityStatus);
+		} else {
+			throw new BusinessException("La actividad no existe");
 		}
+	}
+
+	private boolean assertActivityNotRemoved(Activity activity) {
+		return !activity.getDeleted();
 	}
 
 	private Boolean assertActivityNotNull(Activity activity) {

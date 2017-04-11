@@ -32,7 +32,7 @@ public interface ActivityService {
 	void startActivity(Long activityId, String password)
 			throws BusinessException;
 
-	void closeActivity(Long activityId);
+	void closeActivity(Long activityId) throws BusinessException;
 
 	void checkActivityPassword(ActivityDTO act) throws BusinessException;
 

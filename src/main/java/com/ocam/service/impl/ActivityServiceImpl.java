@@ -123,7 +123,7 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public void closeActivity(Long activityId) {
+	public void closeActivity(Long activityId) throws BusinessException {
 		this.updateActivityStatus.execute(activityId, ActivityStatus.CLOSED);
 	}
 
