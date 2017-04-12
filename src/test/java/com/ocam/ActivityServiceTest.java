@@ -30,6 +30,7 @@ import com.ocam.model.types.GPSPoint;
 import com.ocam.repository.ReportRepository;
 import com.ocam.service.ActivityService;
 import com.ocam.service.HikerService;
+import com.ocam.service.ReportService;
 
 @Rollback(true)
 @RunWith(SpringRunner.class)
@@ -47,6 +48,9 @@ public class ActivityServiceTest {
 
 	@Autowired
 	private HikerService hikerService;
+
+	@Autowired
+	private ReportService reportService;
 
 	@Autowired
 	private ReportRepository reportRepository;
@@ -250,11 +254,13 @@ public class ActivityServiceTest {
 		r3.setDate(this.actualDate);
 		r3.setPoint(gps);
 
-		activityService.saveActivityReport(this.act.getId(), this.hiker.getId(),
-				r1);
-		activityService.saveActivityReport(this.act.getId(), this.hiker.getId(),
-				r2);
-		activityService.saveActivityReport(this.act.getId(), h2.getId(), r3);
+		try {
+			reportService.save(r1);
+			reportService.save(r2);
+			reportService.save(r3);
+		} catch (BusinessException e) {
+			assertNull(e);
+		}
 	}
 
 }

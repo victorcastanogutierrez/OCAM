@@ -1,0 +1,124 @@
+package com.ocam.service.impl.report;
+
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ocam.model.Activity;
+import com.ocam.model.Hiker;
+import com.ocam.model.Report;
+import com.ocam.model.exception.BusinessException;
+import com.ocam.model.types.ActivityStatus;
+import com.ocam.repository.HikerRepository;
+import com.ocam.repository.ReportRepository;
+
+@Component
+public class SaveReport {
+
+	private HikerRepository hikerRepository;
+	private ReportRepository reportRepository;
+
+	@Autowired
+	public SaveReport(HikerRepository hikerRepository,
+			ReportRepository reportRepository) {
+		this.hikerRepository = hikerRepository;
+		this.reportRepository = reportRepository;
+	}
+
+	@Transactional(readOnly = false)
+	public void execute(Report report) throws BusinessException {
+
+		assertReportData(report);
+
+		Hiker h = hikerRepository.findByLogin(report.getHiker().getLogin());
+		if (!assertHiker(h)) {
+			throw new BusinessException(
+					"Hiker asociado al report no encontrado");
+		}
+
+		Activity act = findActivityHiker(h);
+		if (!assertActivity(act)) {
+			throw new BusinessException(
+					"El hiker no participa en ninguna actividad");
+		}
+
+		if (!assertHikerParticipante(act, h)) {
+			throw new BusinessException(
+					"El hiker no está registrado como participante de la actividad");
+		}
+
+		if (!assertGPSPoint(report)) {
+			throw new BusinessException(
+					"Datos de posicionamiento del hiker inválidos.");
+		}
+
+		Report newReport = new Report();
+		newReport.setActivity(act);
+		newReport.setHiker(h);
+		newReport.setDate(new Date());
+		newReport.setPoint(report.getPoint());
+		reportRepository.save(newReport);
+
+		act.getReports().add(newReport);
+		h.getReports().add(newReport);
+	}
+
+	/**
+	 * Busca la actividad en la que el Hiker está como participante
+	 * 
+	 * @param h
+	 * @return
+	 */
+	private Activity findActivityHiker(Hiker h) {
+		return h.getActivities().stream()
+				.filter(x -> ActivityStatus.RUNNING.equals(x.getStatus()))
+				.findFirst().get();
+	}
+
+	/**
+	 * Comprueba que el hiker pertenezca como participante a la actividad
+	 * 
+	 * @param activity
+	 * @param hiker
+	 * @return
+	 */
+	private Boolean assertHikerParticipante(Activity activity, Hiker hiker) {
+		for (Hiker h : activity.getHikers()) {
+			if (h.getId().equals(hiker.getId())) {
+				return Boolean.TRUE;
+			}
+		}
+		return Boolean.FALSE;
+	}
+
+	/**
+	 * Comprueba que lleguen los datos correctamente al servicio
+	 * 
+	 * @param report
+	 * @throws BusinessException
+	 */
+	private void assertReportData(Report report) throws BusinessException {
+		if (report == null) {
+			throw new BusinessException("Datos de reporte inválidos");
+		}
+
+		if (report.getHiker() == null || report.getHiker().getLogin() == null) {
+			throw new BusinessException(
+					"Datos de hiker asociado al reporte inválidos");
+		}
+	}
+
+	private boolean assertHiker(Hiker h) {
+		return h != null;
+	}
+
+	private boolean assertActivity(Activity act) {
+		return act != null;
+	}
+
+	private boolean assertGPSPoint(Report report) {
+		return report.getPoint() != null;
+	}
+}

@@ -23,7 +23,6 @@ import com.ocam.service.impl.activity.FindAllPendingActivities;
 import com.ocam.service.impl.activity.FindLastActivityReports;
 import com.ocam.service.impl.activity.JoinActivityHiker;
 import com.ocam.service.impl.activity.SaveActivity;
-import com.ocam.service.impl.activity.SaveActivityReport;
 import com.ocam.service.impl.activity.StartActivity;
 import com.ocam.service.impl.activity.UpdateActivity;
 import com.ocam.service.impl.activity.UpdateActivityPassword;
@@ -37,7 +36,6 @@ public class ActivityServiceImpl implements ActivityService {
 	private UpdateActivity updateActivity;
 	private FindAllPendingActivities findAllPendingActivities;
 	private FindActivityReportsByHiker findActivityReportsByHiker;
-	private SaveActivityReport saveActivityReport;
 	private JoinActivityHiker joinActivityHiker;
 	private UpdateActivityStatus updateActivityStatus;
 	private CheckActivityPassword checkActivityPassword;
@@ -52,7 +50,6 @@ public class ActivityServiceImpl implements ActivityService {
 			SaveActivity saveActivity, UpdateActivity updateActivity,
 			FindAllPendingActivities findAllPendingActivities,
 			FindActivityReportsByHiker findActivityReportsByHiker,
-			SaveActivityReport saveActivityReport,
 			JoinActivityHiker joinActivityHiker,
 			UpdateActivityStatus updateActivityStatus,
 			CheckActivityPassword checkActivityPassword,
@@ -64,7 +61,6 @@ public class ActivityServiceImpl implements ActivityService {
 		this.updateActivity = updateActivity;
 		this.findAllPendingActivities = findAllPendingActivities;
 		this.findActivityReportsByHiker = findActivityReportsByHiker;
-		this.saveActivityReport = saveActivityReport;
 		this.joinActivityHiker = joinActivityHiker;
 		this.updateActivityStatus = updateActivityStatus;
 		this.checkActivityPassword = checkActivityPassword;
@@ -101,13 +97,6 @@ public class ActivityServiceImpl implements ActivityService {
 	public Set<Report> findActivityReportsByHiker(Long activityId,
 			Long hikerId) {
 		return this.findActivityReportsByHiker.execute(activityId, hikerId);
-	}
-
-	@Override
-	public void saveActivityReport(Long activityId, Long hikerId,
-			Report report) {
-		this.saveActivityReport.execute(activityId, hikerId, report);
-
 	}
 
 	@Override

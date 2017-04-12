@@ -24,8 +24,6 @@ public interface ActivityService {
 
 	Set<Report> findActivityReportsByHiker(Long activityId, Long hikerId);
 
-	void saveActivityReport(Long activityId, Long hikerId, Report report);
-
 	void joinActivityHiker(Long activityId, String login)
 			throws BusinessException;
 
