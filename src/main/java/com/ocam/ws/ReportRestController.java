@@ -28,7 +28,7 @@ public class ReportRestController {
 	 *            login del hiker que se quiere buscar
 	 * @return objeto Hiker codificado en JSON. Vacío en caso de no encontrarse
 	 */
-	@RequestMapping(value = "/report/save", method = RequestMethod.POST,
+	@RequestMapping(value = "/api/report/save", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> save(@RequestBody Report report) {
 		try {

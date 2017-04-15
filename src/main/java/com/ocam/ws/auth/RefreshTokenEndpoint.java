@@ -21,12 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ocam.model.Hiker;
 import com.ocam.repository.HikerRepository;
-import com.ocam.ws.auth.config.ConfigurationSettings;
-import com.ocam.ws.auth.exception.InvalidJwtToken;
 import com.ocam.ws.auth.jwt.AccessJwtToken;
 import com.ocam.ws.auth.jwt.JwtTokenFactory;
-import com.ocam.ws.auth.model.RawAccessJwtToken;
-import com.ocam.ws.auth.model.RefreshToken;
 import com.ocam.ws.auth.model.UserContext;
 import com.ocam.ws.auth.util.Constants;
 
@@ -44,22 +40,17 @@ public class RefreshTokenEndpoint {
 			HttpServletResponse response) throws IOException, ServletException {
 
 		String tokenPayload = request
-				.getHeader(Constants.JWT_TOKEN_HEADER_PARAM);
-		if (StringUtils.isBlank(tokenPayload)) {
+				.getHeader(Constants.JWT_TOKEN_REFRESH_HEADER_PARAM);
+		String email = request.getHeader(Constants.EMAIL_HEADER_PARAM);
+		if (StringUtils.isBlank(tokenPayload) || StringUtils.isBlank(email)) {
 			throw new AuthenticationServiceException(
 					"Authorization header cannot be blank!");
 		}
 
-		RawAccessJwtToken rawToken = new RawAccessJwtToken(tokenPayload);
-		RefreshToken refreshToken = RefreshToken
-				.create(rawToken, ConfigurationSettings.TOKEN_SIGNIN_KEY)
-				.orElseThrow(() -> new InvalidJwtToken());
-
-		String subject = refreshToken.getSubject();
-		Hiker hiker = hikerRepository.findByLogin(subject);
-
+		Hiker hiker = hikerRepository.findByEmail(email);
 		if (hiker == null) {
-			throw new UsernameNotFoundException("User not found: " + subject);
+			throw new UsernameNotFoundException(
+					"Error generando el nuevo token");
 		}
 
 		UserContext userContext = UserContext.create(hiker.getLogin(),
