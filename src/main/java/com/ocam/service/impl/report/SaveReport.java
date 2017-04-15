@@ -1,7 +1,5 @@
 package com.ocam.service.impl.report;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +55,7 @@ public class SaveReport {
 		Report newReport = new Report();
 		newReport.setActivity(act);
 		newReport.setHiker(h);
-		newReport.setDate(new Date());
+		newReport.setDate(report.getDate());
 		newReport.setPoint(report.getPoint());
 		reportRepository.save(newReport);
 
@@ -74,7 +72,7 @@ public class SaveReport {
 	private Activity findActivityHiker(Hiker h) {
 		return h.getActivities().stream()
 				.filter(x -> ActivityStatus.RUNNING.equals(x.getStatus()))
-				.findFirst().get();
+				.findFirst().orElse(null);
 	}
 
 	/**
