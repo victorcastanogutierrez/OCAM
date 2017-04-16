@@ -196,6 +196,7 @@ public class ActivityServiceTest {
 		this.act.setTrack("");
 		this.act.setLongDescription("Descripcion larga");
 		this.act.setShortDescription("Descripcion corta");
+		this.act.setPassword("123");
 
 		HikerDTO hdto = new HikerDTO();
 		hdto.setUsername("log1");
@@ -227,10 +228,11 @@ public class ActivityServiceTest {
 
 		try {
 			activityService.joinActivityHiker(this.act.getId(),
-					this.hiker.getLogin());
-			activityService.joinActivityHiker(this.act.getId(), h2.getLogin());
+					this.hiker.getLogin(), "123");
+			activityService.joinActivityHiker(this.act.getId(), h2.getLogin(),
+					"123");
 		} catch (BusinessException e) {
-			assertNotNull(e);
+			assertNull(e);
 		}
 
 		Calendar c = Calendar.getInstance();

@@ -25,10 +25,10 @@ public class JoinActivityHiker {
 	}
 
 	@Transactional(readOnly = false)
-	public void execute(Long activityId, String login)
+	public void execute(Long activityId, String login, String password)
 			throws BusinessException {
 
-		if (!assertInputParameters(activityId, login)) {
+		if (!assertInputParameters(activityId, login, password)) {
 			throw new BusinessException("Error uniendose a la actividad");
 		}
 
@@ -37,6 +37,10 @@ public class JoinActivityHiker {
 
 		if (!assertActivityNotNull(activity) || !assertHikerNotNull(hiker)) {
 			throw new BusinessException("Error uniendose a la actividad");
+		}
+
+		if (!assertActivityPassword(activity, password)) {
+			throw new BusinessException("Password de actividad incorrecta.");
 		}
 
 		if (!assertHikerJoined(activity, hiker)) {
@@ -51,6 +55,10 @@ public class JoinActivityHiker {
 
 		activity.getHikers().add(hiker);
 		hiker.getActivities().add(activity);
+	}
+
+	private boolean assertActivityPassword(Activity activity, String password) {
+		return activity.getPassword().equals(password);
 	}
 
 	/**
@@ -77,8 +85,9 @@ public class JoinActivityHiker {
 		return Boolean.TRUE;
 	}
 
-	private boolean assertInputParameters(Long activityId, String login) {
-		return activityId != null && login != null;
+	private boolean assertInputParameters(Long activityId, String login,
+			String password) {
+		return activityId != null && login != null && password != null;
 	}
 
 	private Boolean assertHikerNotNull(Hiker hiker) {

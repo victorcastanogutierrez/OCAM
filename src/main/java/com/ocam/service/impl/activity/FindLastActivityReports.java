@@ -58,7 +58,25 @@ public class FindLastActivityReports {
 			result.add(entry.getValue().get(0));
 		}
 
-		return result;
+		return result.stream()
+				.filter(x -> isInActivity(x.getHiker(), x.getActivity()))
+				.collect(Collectors.toSet());
+	}
+
+	/**
+	 * Comprueba si un hiker está participando en una actividad
+	 * 
+	 * @param hiker
+	 * @param activity
+	 * @return
+	 */
+	private Boolean isInActivity(Hiker hiker, Activity activity) {
+		for (Hiker h : activity.getHikers()) {
+			if (h.getId().equals(hiker.getId())) {
+				return Boolean.TRUE;
+			}
+		}
+		return Boolean.FALSE;
 	}
 
 	private Boolean assertActivityNotNull(Activity activity) {

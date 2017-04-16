@@ -267,17 +267,25 @@ public class ActivityRestController {
 		}
 	}
 
-	@RequestMapping(value = "/api/joinActivity/{activityId}/{login}",
+	/**
+	 * Incluye a un hiker como participante de una actividad
+	 * 
+	 * @param activityId
+	 * @param login
+	 * @return
+	 */
+	@RequestMapping(value = "/api/joinActivity/{activityId}/{login}/{password}",
 			method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> joinActivity(
 			@PathVariable("activityId") Long activityId,
-			@PathVariable("login") String login) {
+			@PathVariable("login") String login,
+			@PathVariable("password") String password) {
 
 		try {
-			activityService.joinActivityHiker(activityId, login);
+			activityService.joinActivityHiker(activityId, login, password);
 		} catch (BusinessException e) {
-			ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST,
+			ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY,
 					e.getMessage());
 			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
 					apiError.getStatus());
@@ -288,7 +296,7 @@ public class ActivityRestController {
 	@RequestMapping(value = "/api/findActivityHikers/{activityId}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> joinActivity(
+	public ResponseEntity<?> findActivityHikers(
 			@PathVariable("activityId") Long activityId) {
 
 		List<Hiker> result;
@@ -320,4 +328,29 @@ public class ActivityRestController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	/**
+	 * Elimina un hiker de una actividad.
+	 * 
+	 * @param activityId
+	 * @param login
+	 * @return
+	 */
+	@RequestMapping(value = "/api/activity/leaveActivity/{activityId}/{login}",
+			method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> leaveActivity(
+			@PathVariable("activityId") Long activityId,
+			@PathVariable("login") String login) {
+
+		try {
+			activityService.deleteActivityHiker(activityId, login);
+		} catch (BusinessException e) {
+
+			ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<Object>(HttpStatus.OK);
+	}
 }

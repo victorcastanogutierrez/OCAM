@@ -24,7 +24,7 @@ public interface ActivityService {
 
 	Set<Report> findActivityReportsByHiker(Long activityId, Long hikerId);
 
-	void joinActivityHiker(Long activityId, String login)
+	void joinActivityHiker(Long activityId, String login, String password)
 			throws BusinessException;
 
 	void startActivity(Long activityId, String password)
@@ -40,4 +40,6 @@ public interface ActivityService {
 
 	List<Hiker> findActivityHikers(Long activityId) throws BusinessException;
 
+	void deleteActivityHiker(Long activityId, String hikerLogin)
+			throws BusinessException;
 }

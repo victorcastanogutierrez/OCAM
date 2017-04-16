@@ -16,6 +16,7 @@ import com.ocam.model.types.ActivityStatus;
 import com.ocam.repository.ActivityRepository;
 import com.ocam.service.ActivityService;
 import com.ocam.service.impl.activity.CheckActivityPassword;
+import com.ocam.service.impl.activity.DeleteActivityHiker;
 import com.ocam.service.impl.activity.FindActivityById;
 import com.ocam.service.impl.activity.FindActivityHikers;
 import com.ocam.service.impl.activity.FindActivityReportsByHiker;
@@ -43,6 +44,7 @@ public class ActivityServiceImpl implements ActivityService {
 	private StartActivity startActivity;
 	private UpdateActivityPassword updateActivityPassword;
 	private FindActivityHikers findActivityHikers;
+	private DeleteActivityHiker deleteActivityHiker;
 
 	@Autowired
 	public ActivityServiceImpl(ActivityRepository activityRepository,
@@ -55,7 +57,8 @@ public class ActivityServiceImpl implements ActivityService {
 			CheckActivityPassword checkActivityPassword,
 			FindActivityById findActivityById, StartActivity startActivity,
 			UpdateActivityPassword updateActivityPassword,
-			FindActivityHikers findActivityHikers) {
+			FindActivityHikers findActivityHikers,
+			DeleteActivityHiker deleteActivityHiker) {
 		this.findLastActivityReports = findLastActivityReports;
 		this.saveActivity = saveActivity;
 		this.updateActivity = updateActivity;
@@ -68,6 +71,7 @@ public class ActivityServiceImpl implements ActivityService {
 		this.startActivity = startActivity;
 		this.updateActivityPassword = updateActivityPassword;
 		this.findActivityHikers = findActivityHikers;
+		this.deleteActivityHiker = deleteActivityHiker;
 	}
 
 	@Override
@@ -100,9 +104,9 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public void joinActivityHiker(Long activityId, String login)
-			throws BusinessException {
-		this.joinActivityHiker.execute(activityId, login);
+	public void joinActivityHiker(Long activityId, String login,
+			String password) throws BusinessException {
+		this.joinActivityHiker.execute(activityId, login, password);
 	}
 
 	@Override
@@ -138,5 +142,12 @@ public class ActivityServiceImpl implements ActivityService {
 	public List<Hiker> findActivityHikers(Long activityId)
 			throws BusinessException {
 		return this.findActivityHikers.execute(activityId);
+	}
+
+	@Override
+	public void deleteActivityHiker(Long activityId, String hikerLogin)
+			throws BusinessException {
+		this.deleteActivityHiker.execute(activityId, hikerLogin);
+
 	}
 }
