@@ -110,9 +110,9 @@ public class ActivityServiceImpl implements ActivityService {
 	}
 
 	@Override
-	public void startActivity(Long activityId, String password)
+	public void startActivity(Long activityId, String password, String user)
 			throws BusinessException {
-		this.startActivity.execute(activityId, password);
+		this.startActivity.execute(activityId, password, user);
 	}
 
 	@Override

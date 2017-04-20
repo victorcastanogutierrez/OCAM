@@ -230,11 +230,13 @@ public class ActivityRestController {
 
 	@RequestMapping(value = "/api/startActivity", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> startActivity(@RequestBody Activity activityDTO) {
+	public ResponseEntity<?> startActivity(HttpServletRequest request,
+			@RequestBody Activity activityDTO) {
 
+		String user = UserVerifierUtils.getRequestUsername(request);
 		try {
 			activityService.startActivity(activityDTO.getId(),
-					activityDTO.getPassword());
+					activityDTO.getPassword(), user);
 		} catch (BusinessException e) {
 			ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST,
 					e.getMessage());

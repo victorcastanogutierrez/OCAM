@@ -9,11 +9,13 @@ import com.ocam.model.Hiker;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.model.types.ActivityStatus;
 import com.ocam.repository.ActivityRepository;
+import com.ocam.repository.HikerRepository;
 
 @Component
 public class StartActivity {
 
 	private ActivityRepository activityRepository;
+	private HikerRepository hikerRepository;
 
 	/**
 	 * Inicia una actividad. Para ello comprueba que los datos son correctos
@@ -23,14 +25,19 @@ public class StartActivity {
 	 * @param activityRepository
 	 */
 	@Autowired
-	public StartActivity(ActivityRepository activityRepository) {
+	public StartActivity(ActivityRepository activityRepository,
+			HikerRepository hikerRepository) {
 		this.activityRepository = activityRepository;
+		this.hikerRepository = hikerRepository;
 	}
 
 	@Transactional(readOnly = false)
-	public void execute(Long activityId, String password)
+	public void execute(Long activityId, String password, String user)
 			throws BusinessException {
 
+		if (assertUserNotNull(user)) {
+			throw new BusinessException("Guía de la activida inválido");
+		}
 		if (assertActivityNotNull(activityId)) {
 			throw new BusinessException("Actividad inválida");
 		}
@@ -40,23 +47,45 @@ public class StartActivity {
 
 		Activity activity = activityRepository.findOne(activityId);
 		assertActivity(activity);
+		Hiker hiker = hikerRepository.findByLogin(user);
+		assertGuide(activity, hiker);
 
-		includeGuidesAsHikers(activity);
+		includeGuideAsHiker(activity, hiker);
 		activity.setPassword(password);
 		activity.setStatus(ActivityStatus.RUNNING);
+	}
 
+	private void assertGuide(Activity activity, Hiker hiker)
+			throws BusinessException {
+		if (hiker == null) {
+			throw new BusinessException("Guía de la actividad inválido");
+		}
+		if (!assertHikerGuide(hiker, activity)) {
+			throw new BusinessException("No eres guía de la actividad");
+		}
+	}
+
+	private Boolean assertHikerGuide(Hiker hiker, Activity activity) {
+		for (Hiker h : activity.getHikers()) {
+			if (h.getId().equals(hiker.getId())) {
+				return Boolean.TRUE;
+			}
+		}
+		return Boolean.FALSE;
+	}
+
+	private boolean assertUserNotNull(String user) {
+		return user != null;
 	}
 
 	/**
-	 * Método que incluye los guías como hikers de la actividad
+	 * Método que incluye al guía como participante de una actividad
 	 * 
 	 * @param activity
 	 */
-	private void includeGuidesAsHikers(Activity activity) {
-		for (Hiker h : activity.getGuides()) {
-			h.getActivities().add(activity);
-			activity.getHikers().add(h);
-		}
+	private void includeGuideAsHiker(Activity activity, Hiker hiker) {
+		hiker.getActivities().add(activity);
+		activity.getHikers().add(hiker);
 	}
 
 	/**

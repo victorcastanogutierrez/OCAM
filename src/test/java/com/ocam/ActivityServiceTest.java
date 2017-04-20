@@ -98,7 +98,7 @@ public class ActivityServiceTest {
 
 			assertEquals(1, pendingActivities.size());
 
-			activityService.startActivity(this.act.getId(), "passwd");
+			activityService.startActivity(this.act.getId(), "passwd", null);
 			pendingActivities = activityService
 					.findAllPendingActivities(actDto);
 
