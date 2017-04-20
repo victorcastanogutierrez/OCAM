@@ -35,7 +35,7 @@ public class StartActivity {
 	public void execute(Long activityId, String password, String user)
 			throws BusinessException {
 
-		if (assertUserNotNull(user)) {
+		if (!assertUserNotNull(user)) {
 			throw new BusinessException("Guía de la activida inválido");
 		}
 		if (assertActivityNotNull(activityId)) {
@@ -66,7 +66,7 @@ public class StartActivity {
 	}
 
 	private Boolean assertHikerGuide(Hiker hiker, Activity activity) {
-		for (Hiker h : activity.getHikers()) {
+		for (Hiker h : activity.getGuides()) {
 			if (h.getId().equals(hiker.getId())) {
 				return Boolean.TRUE;
 			}
