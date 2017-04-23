@@ -1,5 +1,7 @@
 package com.ocam.ws;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.ocam.model.Activity;
 import com.ocam.model.Hiker;
 import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
@@ -155,5 +159,29 @@ public class HikerRestController {
 			return new ResponseEntity<Hiker>(HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 		return new ResponseEntity<Hiker>(hiker, HttpStatus.OK);
+	}
+
+	/**
+	 * Devuelve la lista de actividades en las que participó el hiker y están
+	 * cerradas
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/api/findHikerFinishActivities/{login}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody ResponseEntity<?> findHikerFinishActivities(
+			@PathVariable("login") String login) {
+
+		List<Activity> acts;
+		try {
+			acts = hikerService.findHikerFinishActivities(login);
+		} catch (BusinessException e) {
+			ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<>(acts, HttpStatus.OK);
 	}
 }

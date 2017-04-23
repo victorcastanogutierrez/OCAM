@@ -1,5 +1,8 @@
 package com.ocam.service;
 
+import java.util.List;
+
+import com.ocam.model.Activity;
 import com.ocam.model.Hiker;
 import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
@@ -21,4 +24,6 @@ public interface HikerService {
 
 	void validateHiker(String code) throws BusinessException;
 
+	List<Activity> findHikerFinishActivities(String login)
+			throws BusinessException;
 }

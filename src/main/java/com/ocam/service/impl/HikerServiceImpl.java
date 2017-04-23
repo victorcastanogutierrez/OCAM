@@ -1,8 +1,11 @@
 package com.ocam.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ocam.model.Activity;
 import com.ocam.model.Hiker;
 import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
@@ -10,6 +13,7 @@ import com.ocam.service.HikerService;
 import com.ocam.service.impl.hiker.FindHikerByEmail;
 import com.ocam.service.impl.hiker.FindHikerByLogin;
 import com.ocam.service.impl.hiker.FindHikerByLoginPassword;
+import com.ocam.service.impl.hiker.FindHikerFinishActivities;
 import com.ocam.service.impl.hiker.SaveHiker;
 import com.ocam.service.impl.hiker.UpdateHiker;
 import com.ocam.service.impl.hiker.UpdateHikerPassword;
@@ -25,13 +29,15 @@ public class HikerServiceImpl implements HikerService {
 	private UpdateHikerPassword updateHikerPassword;
 	private FindHikerByEmail findHikerByEmail;
 	private ValidateHiker validateHiker;
+	private FindHikerFinishActivities findHikerFinishActivities;
 
 	@Autowired
 	public HikerServiceImpl(FindHikerByLoginPassword findHikerByLoginPassword,
 			SaveHiker saveHiker, UpdateHiker updateHiker,
 			FindHikerByLogin findHikerByLogin,
 			UpdateHikerPassword updateHikerPassword,
-			FindHikerByEmail findHikerByEmail, ValidateHiker validateHiker) {
+			FindHikerByEmail findHikerByEmail, ValidateHiker validateHiker,
+			FindHikerFinishActivities findHikerFinishActivities) {
 		this.findHikerByLoginPassword = findHikerByLoginPassword;
 		this.findHikerByLogin = findHikerByLogin;
 		this.saveHiker = saveHiker;
@@ -39,6 +45,7 @@ public class HikerServiceImpl implements HikerService {
 		this.updateHikerPassword = updateHikerPassword;
 		this.findHikerByEmail = findHikerByEmail;
 		this.validateHiker = validateHiker;
+		this.findHikerFinishActivities = findHikerFinishActivities;
 	}
 
 	@Override
@@ -75,5 +82,11 @@ public class HikerServiceImpl implements HikerService {
 	@Override
 	public void validateHiker(String code) throws BusinessException {
 		this.validateHiker.execute(code);
+	}
+
+	@Override
+	public List<Activity> findHikerFinishActivities(String login)
+			throws BusinessException {
+		return this.findHikerFinishActivities.execute(login);
 	}
 }

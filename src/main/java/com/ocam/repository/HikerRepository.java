@@ -1,7 +1,12 @@
 package com.ocam.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Set;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.ocam.model.Activity;
 import com.ocam.model.Hiker;
 
 public interface HikerRepository extends JpaRepository<Hiker, Long> {
@@ -15,5 +20,8 @@ public interface HikerRepository extends JpaRepository<Hiker, Long> {
 	Hiker findByEmail(String email);
 
 	Hiker findTopByActiveCodeAndActive(String ActiveCode, Boolean Active);
+
+	@Query("select distinct a from Activity a join a.reports r join r.hiker h where h.login = :login and a.status = 'CLOSED'")
+	Set<Activity> findHikerActivities(@Param("login") String login);
 
 }
