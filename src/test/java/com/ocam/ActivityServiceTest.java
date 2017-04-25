@@ -153,24 +153,24 @@ public class ActivityServiceTest {
 	public void testFindActivityReportsByHiker() {
 		assertEquals(2,
 				activityService.findActivityReportsByHiker(this.act.getId(),
-						this.hiker.getId()).size());
+						this.hiker.getEmail()).size());
 
 		Report r = getNewReport();
 		this.reportRepository.save(r);
 
 		Set<Report> reports = activityService.findActivityReportsByHiker(
-				this.act.getId(), this.hiker.getId());
+				this.act.getId(), this.hiker.getEmail());
 		assertEquals(3, reports.size());
 
 		this.reportRepository.delete(reports.stream().findFirst().get());
 		assertEquals(2,
 				activityService.findActivityReportsByHiker(this.act.getId(),
-						this.hiker.getId()).size());
+						this.hiker.getEmail()).size());
 
 		reports.forEach(x -> this.reportRepository.delete(x));
 		assertEquals(0,
 				activityService.findActivityReportsByHiker(this.act.getId(),
-						this.hiker.getId()).size());
+						this.hiker.getEmail()).size());
 	}
 
 	private Report getNewReport() {

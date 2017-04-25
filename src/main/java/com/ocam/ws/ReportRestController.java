@@ -1,10 +1,13 @@
 package com.ocam.ws;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,4 +46,29 @@ public class ReportRestController {
 		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
+	/**
+	 * Devuelve el último reporte de un hiker de una actividad
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(
+			value = "/api/findLastHikerActivityReport/{activityId}/{login}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> findLastHikerActivityReport(
+			@PathVariable("activityId") Long id,
+			@PathVariable("login") String login) {
+
+		Set<Report> result;
+		try {
+			result = reportService.findHikerLastActivityReport(id, login);
+		} catch (BusinessException e) {
+			ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 }

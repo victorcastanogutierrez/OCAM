@@ -99,8 +99,8 @@ public class ActivityServiceImpl implements ActivityService {
 
 	@Override
 	public Set<Report> findActivityReportsByHiker(Long activityId,
-			Long hikerId) {
-		return this.findActivityReportsByHiker.execute(activityId, hikerId);
+			String hikerEmail) {
+		return this.findActivityReportsByHiker.execute(activityId, hikerEmail);
 	}
 
 	@Override

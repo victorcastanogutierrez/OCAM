@@ -22,7 +22,7 @@ public interface ActivityService {
 	List<Activity> findAllPendingActivities(ActivityDTO criteria)
 			throws BusinessException;
 
-	Set<Report> findActivityReportsByHiker(Long activityId, Long hikerId);
+	Set<Report> findActivityReportsByHiker(Long activityId, String hikerEmail);
 
 	void joinActivityHiker(Long activityId, String login, String password)
 			throws BusinessException;

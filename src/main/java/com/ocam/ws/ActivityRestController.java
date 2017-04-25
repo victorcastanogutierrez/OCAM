@@ -190,15 +190,16 @@ public class ActivityRestController {
 	 * @param hikerId
 	 * @return
 	 */
-	@RequestMapping(value = "/api/activityHikerReports/{activityId}/{hikerId}",
+	@RequestMapping(
+			value = "/api/activityHikerReports/{activityId}/{hikerEmail}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> findActivityHikerReports(
 			@PathVariable("activityId") Long activityId,
-			@PathVariable("hikerId") Long hikerId) {
+			@PathVariable("hikerEmail") String hikerEmail) {
 
 		Set<Report> reports = activityService
-				.findActivityReportsByHiker(activityId, hikerId);
+				.findActivityReportsByHiker(activityId, hikerEmail);
 		if (reports == null) {
 			return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
 		}

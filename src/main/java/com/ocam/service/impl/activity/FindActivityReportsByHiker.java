@@ -30,14 +30,14 @@ public class FindActivityReportsByHiker {
 	}
 
 	@Transactional(readOnly = true)
-	public Set<Report> execute(Long activityId, Long hikerId) {
+	public Set<Report> execute(Long activityId, String hikerEmail) {
 
-		if (!assertActivityId(activityId) || !assertHikerId(hikerId)) {
+		if (!assertActivityId(activityId) || !assertHikerEmail(hikerEmail)) {
 			return null;
 		}
 
 		Activity activity = activityRepository.findOne(activityId);
-		Hiker hiker = hikerRepository.findOne(hikerId);
+		Hiker hiker = hikerRepository.findByEmail(hikerEmail);
 
 		if (assertActivityNotNull(activity) && assertHikerNotNull(hiker)) {
 			return reportRepository.findAllByActivityAndHiker(activity, hiker);
@@ -49,8 +49,8 @@ public class FindActivityReportsByHiker {
 		return activityId != null;
 	}
 
-	private boolean assertHikerId(Long activityId) {
-		return activityId != null;
+	private boolean assertHikerEmail(String login) {
+		return login != null;
 	}
 
 	private Boolean assertHikerNotNull(Hiker hiker) {
