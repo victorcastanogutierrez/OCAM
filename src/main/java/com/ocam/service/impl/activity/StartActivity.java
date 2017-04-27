@@ -1,5 +1,7 @@
 package com.ocam.service.impl.activity;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +55,7 @@ public class StartActivity {
 		includeGuideAsHiker(activity, hiker);
 		activity.setPassword(password);
 		activity.setStatus(ActivityStatus.RUNNING);
+		activity.setStartedDate(new Date());
 	}
 
 	private void assertGuide(Activity activity, Hiker hiker)

@@ -38,10 +38,20 @@ public class Activity extends BaseEntity {
 	@Column(name = "MIDE_LINK")
 	private String mide;
 
+	/**
+	 * Fecha programada para la actividad
+	 */
 	@Column(name = "START_DATE")
 	@Temporal(TemporalType.DATE)
 	@NotNull
 	private Date startDate;
+
+	/**
+	 * Fecha en la que se inició la actividad
+	 */
+	@Column(name = "STARTED_DATE")
+	@Temporal(TemporalType.DATE)
+	private Date startedDate;
 
 	@Column(name = "MAX_PLACES")
 	private Long maxPlaces;
@@ -87,6 +97,14 @@ public class Activity extends BaseEntity {
 
 	public Boolean getDeleted() {
 		return deleted;
+	}
+
+	public Date getStartedDate() {
+		return startedDate;
+	}
+
+	public void setStartedDate(Date startedDate) {
+		this.startedDate = startedDate;
 	}
 
 	public void setDeleted(Boolean deleted) {
