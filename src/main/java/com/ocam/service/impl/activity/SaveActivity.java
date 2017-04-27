@@ -85,7 +85,8 @@ public class SaveActivity {
 	}
 
 	private boolean assertMIDE(Activity activity) {
-		return activity.getMide().contains("mide.montanasegura.com/mide/");
+		return activity.getMide().contains("www")
+				|| activity.getMide().contains("http");
 	}
 
 	private boolean assertPropietario(ActivityHikerDTO activitydto) {
