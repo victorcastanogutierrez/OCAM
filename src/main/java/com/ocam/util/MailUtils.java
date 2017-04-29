@@ -17,7 +17,7 @@ import com.ocam.model.exception.BusinessException;
 
 public class MailUtils {
 
-	public static void sendEmail(String toEmail, String code)
+	public static void sendEmail(String toEmail, String title, String content)
 			throws BusinessException {
 		try {
 			Properties props = new Properties();
@@ -45,11 +45,8 @@ public class MailUtils {
 
 			msg.setReplyTo(InternetAddress.parse("no_reply@ocam.com", false));
 
-			msg.setSubject("Confirmación de cuenta", "UTF-8");
-			msg.setText(
-					"¡Bienvenido a OCAM!\n\nPara confirmar tu cuenta, por favor, sigue el siguiente enlace: https://victorcastanogutierrez.github.io/OCAM-web/#/access/"
-							+ code,
-					"UTF-8");
+			msg.setSubject(title, "UTF-8");
+			msg.setText(content, "UTF-8");
 			msg.setSentDate(new Date());
 
 			msg.setRecipients(Message.RecipientType.TO,

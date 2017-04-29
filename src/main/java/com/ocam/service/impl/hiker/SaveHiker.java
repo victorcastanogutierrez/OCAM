@@ -43,7 +43,10 @@ public class SaveHiker {
 			try {
 				String code = MailUtils.generateKey(h.getLogin());
 				h.setActiveCode(code);
-				MailUtils.sendEmail(h.getEmail(), code);
+				MailUtils.sendEmail(h.getEmail(), "Confirmación de cuenta",
+						"¡Bienvenido a OCAM!\n\nPara confirmar tu cuenta, "
+								+ "por favor, sigue el siguiente enlace: https://victorcastanogutierrez.github.io/OCAM-web/#/access/"
+								+ code);
 			} catch (NoSuchAlgorithmException e) {
 				throw new BusinessException("Error durante el registro.");
 			}

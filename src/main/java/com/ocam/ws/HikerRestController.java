@@ -195,7 +195,7 @@ public class HikerRestController {
 	@RequestMapping(value = "/api/hiker/delete/{login}",
 			method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> save(HttpServletRequest request,
+	public ResponseEntity<?> deleteHiker(HttpServletRequest request,
 			@PathVariable("login") String login) {
 
 		String user = UserVerifierUtils.getRequestUsername(request);
@@ -209,6 +209,29 @@ public class HikerRestController {
 			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
 					apiError.getStatus());
 		}
-		return new ResponseEntity<>(HttpStatus.CREATED);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	/**
+	 * Genera una nueva contraseña para el hiker
+	 * 
+	 * @param request
+	 * @param login
+	 * @return
+	 */
+	@RequestMapping(value = "/hiker/resetPassword", method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> resetPassword(@RequestBody HikerDTO hiker) {
+
+		try {
+			hikerService.resetPassword(hiker.getEmail());
+		} catch (BusinessException e) {
+
+			ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

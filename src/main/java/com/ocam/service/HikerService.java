@@ -28,4 +28,6 @@ public interface HikerService {
 			throws BusinessException;
 
 	void deleteHiker(String login) throws BusinessException;
+
+	void resetPassword(String email) throws BusinessException;
 }
