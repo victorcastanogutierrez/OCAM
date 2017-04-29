@@ -45,7 +45,7 @@ public class FindHikerByLoginPassword {
 	}
 
 	private boolean assertCuentaActiva(Hiker hiker) {
-		return hiker.getActive();
+		return hiker.getActive() && !hiker.getDeleted();
 	}
 
 	private boolean assertPasswordAndLogin(String login, String password) {

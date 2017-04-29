@@ -184,4 +184,31 @@ public class HikerRestController {
 		}
 		return new ResponseEntity<>(acts, HttpStatus.OK);
 	}
+
+	/**
+	 * Elimina un hiker (borrado lógico)
+	 * 
+	 * @param request
+	 * @param login
+	 * @return
+	 */
+	@RequestMapping(value = "/api/hiker/delete/{login}",
+			method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> save(HttpServletRequest request,
+			@PathVariable("login") String login) {
+
+		String user = UserVerifierUtils.getRequestUsername(request);
+
+		try {
+			hikerService.deleteHiker(user);
+		} catch (BusinessException e) {
+
+			ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
 }

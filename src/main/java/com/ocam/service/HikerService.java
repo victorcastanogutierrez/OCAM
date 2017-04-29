@@ -26,4 +26,6 @@ public interface HikerService {
 
 	List<Activity> findHikerFinishActivities(String login)
 			throws BusinessException;
+
+	void deleteHiker(String login) throws BusinessException;
 }

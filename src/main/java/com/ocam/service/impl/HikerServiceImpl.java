@@ -10,6 +10,7 @@ import com.ocam.model.Hiker;
 import com.ocam.model.HikerDTO;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.HikerService;
+import com.ocam.service.impl.hiker.DeleteHiker;
 import com.ocam.service.impl.hiker.FindHikerByEmail;
 import com.ocam.service.impl.hiker.FindHikerByLogin;
 import com.ocam.service.impl.hiker.FindHikerByLoginPassword;
@@ -30,6 +31,7 @@ public class HikerServiceImpl implements HikerService {
 	private FindHikerByEmail findHikerByEmail;
 	private ValidateHiker validateHiker;
 	private FindHikerFinishActivities findHikerFinishActivities;
+	private DeleteHiker deleteHiker;
 
 	@Autowired
 	public HikerServiceImpl(FindHikerByLoginPassword findHikerByLoginPassword,
@@ -37,7 +39,8 @@ public class HikerServiceImpl implements HikerService {
 			FindHikerByLogin findHikerByLogin,
 			UpdateHikerPassword updateHikerPassword,
 			FindHikerByEmail findHikerByEmail, ValidateHiker validateHiker,
-			FindHikerFinishActivities findHikerFinishActivities) {
+			FindHikerFinishActivities findHikerFinishActivities,
+			DeleteHiker deleteHiker) {
 		this.findHikerByLoginPassword = findHikerByLoginPassword;
 		this.findHikerByLogin = findHikerByLogin;
 		this.saveHiker = saveHiker;
@@ -46,6 +49,7 @@ public class HikerServiceImpl implements HikerService {
 		this.findHikerByEmail = findHikerByEmail;
 		this.validateHiker = validateHiker;
 		this.findHikerFinishActivities = findHikerFinishActivities;
+		this.deleteHiker = deleteHiker;
 	}
 
 	@Override
@@ -88,5 +92,10 @@ public class HikerServiceImpl implements HikerService {
 	public List<Activity> findHikerFinishActivities(String login)
 			throws BusinessException {
 		return this.findHikerFinishActivities.execute(login);
+	}
+
+	@Override
+	public void deleteHiker(String login) throws BusinessException {
+		this.deleteHiker.execute(login);
 	}
 }

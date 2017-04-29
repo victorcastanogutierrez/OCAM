@@ -34,6 +34,11 @@ public class Hiker extends BaseEntity {
 	@JsonIgnore
 	private Boolean active = Boolean.FALSE;
 
+	@Column(name = "DELETED")
+	@NotNull
+	@JsonIgnore
+	private Boolean deleted = Boolean.FALSE;
+
 	@Column(name = "ACTIVE_CODE")
 	@JsonIgnore
 	private String activeCode;
@@ -126,4 +131,11 @@ public class Hiker extends BaseEntity {
 		this.owneds = owneds;
 	}
 
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
 }
