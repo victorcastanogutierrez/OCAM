@@ -71,4 +71,28 @@ public class ReportRestController {
 		}
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+
+	/**
+	 * Devuelve todos los reportes de una actividad
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "/api/findAllByActivity/{activityId}",
+			method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> findAllByActivity(
+			@PathVariable("activityId") Long id) {
+
+		Set<Report> result;
+		try {
+			result = reportService.findAllByActivity(id);
+		} catch (BusinessException e) {
+			ApiError apiError = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY,
+					e.getMessage());
+			return new ResponseEntity<Object>(apiError, new HttpHeaders(),
+					apiError.getStatus());
+		}
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 }

@@ -12,4 +12,5 @@ public interface ReportService {
 	Set<Report> findHikerLastActivityReport(Long activityId, String login)
 			throws BusinessException;
 
+	Set<Report> findAllByActivity(Long activityId) throws BusinessException;
 }
