@@ -191,7 +191,7 @@ public class ActivityRestController {
 	 * @return
 	 */
 	@RequestMapping(
-			value = "/api/activityHikerReports/{activityId}/{hikerEmail}",
+			value = "/api/activityHikerReports/{activityId}/{hikerEmail:.+}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> findActivityHikerReports(
