@@ -21,7 +21,7 @@ public interface HikerRepository extends JpaRepository<Hiker, Long> {
 
 	Hiker findTopByActiveCodeAndActive(String ActiveCode, Boolean Active);
 
-	@Query("select distinct a from Activity a join a.reports r join r.hiker h where h.login = :login and a.status = 'CLOSED' and a.deleted = 0")
+	@Query("select distinct a from Activity a join a.reports r join r.hiker h where h.login = :login and a.status = 'CLOSED' and a.deleted = false")
 	Set<Activity> findHikerActivities(@Param("login") String login);
 
 }
