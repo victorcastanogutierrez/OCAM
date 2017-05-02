@@ -28,11 +28,11 @@ import com.ocam.model.types.ActivityStatus;
 @Table(name = "ACTIVITIES")
 public class Activity extends BaseEntity {
 
-	@Column(name = "SHORT_DESCRIPTION")
+	@Column(name = "SHORT_DESCRIPTION", length = 255)
 	@NotNull
 	private String shortDescription;
 
-	@Column(name = "LONG_DESCRIPTION")
+	@Column(name = "LONG_DESCRIPTION", length = 510)
 	private String longDescription;
 
 	@Column(name = "MIDE_LINK")

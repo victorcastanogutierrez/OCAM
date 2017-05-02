@@ -46,10 +46,12 @@ public class ResetHikerPassword {
 		}
 
 		h.setPassword(encryptedNewPassword);
-		MailUtils.sendEmail(email, "Nueva contraseña OCAM",
-				"Hola " + h.getLogin() + "\n"
-						+ "Has solicitado una nueva contraseña. La contraseña nueva asignada a la cuenta es: "
-						+ newPassword);
+		MailUtils.sendEmail(email, "Nueva contraseña OCAM", "Hola "
+				+ h.getLogin() + "\n"
+				+ "Has solicitado una nueva contraseña. La contraseña nueva asignada a la cuenta es: "
+				+ newPassword + "\n"
+				+ "Puedes acceder con ella tanto a la web como a la aplicación móvil "
+				+ "y cambiarla desde cualquiera de los dos indistintamente");
 	}
 
 	private boolean assertCodedPassword(String password) {
