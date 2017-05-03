@@ -72,16 +72,20 @@ public class SaveActivity {
 
 		if (!isEditing(activity)) {
 			activity.setStatus(ActivityStatus.PENDING);
-		} else {
-			ActivityStatus status = this.activityRepository
-					.findActivityStatusById(activity.getId());
-			activity.setStatus(status);
-		}
 
-		activity.setOwner(hiker);
-		this.activityRepository.save(activity);
-		hiker.getOwneds().add(activity);
-		return activity;
+			activity.setOwner(hiker);
+			this.activityRepository.save(activity);
+			hiker.getOwneds().add(activity);
+			return activity;
+		} else {
+			Activity act = this.activityRepository.findOne(activity.getId());
+			act.setShortDescription(activity.getShortDescription());
+			act.setLongDescription(act.getLongDescription());
+			act.setMide(activity.getMide());
+			act.setStartDate(activity.getStartDate());
+			act.setMaxPlaces(activity.getMaxPlaces());
+			return act;
+		}
 	}
 
 	private boolean assertMIDE(Activity activity) {
