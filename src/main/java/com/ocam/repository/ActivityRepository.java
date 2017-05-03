@@ -12,9 +12,16 @@ import com.ocam.model.types.ActivityStatus;
 
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
+	@Query("select a from Activity a where (a.status = :status or a.status = :status1) and a.deleted = :deleted")
 	List<Activity> findByStatusOrStatusAndDeletedOrderByStartDateDesc(
-			ActivityStatus status, ActivityStatus status1, Boolean deleted,
-			Pageable pageable);
+			@Param("status") ActivityStatus status,
+			@Param("status1") ActivityStatus status1,
+			@Param("deleted") Boolean deleted, Pageable pageable);
+	/*
+	 * List<Activity> findByStatusOrStatusAndDeletedOrderByStartDateDesc(
+	 * ActivityStatus status, ActivityStatus status1, Boolean deleted, Pageable
+	 * pageable);
+	 */
 
 	@Query("select a.status from Activity a where a.id = :id")
 	ActivityStatus findActivityStatusById(@Param("id") Long id);
