@@ -84,6 +84,7 @@ public class SaveActivity {
 			act.setMide(activity.getMide());
 			act.setStartDate(activity.getStartDate());
 			act.setMaxPlaces(activity.getMaxPlaces());
+			act.setGuides(activity.getGuides());
 			if (activity.getDeleted() != null
 					&& Boolean.TRUE.equals(activity.getDeleted())) {
 				act.setDeleted(Boolean.TRUE);

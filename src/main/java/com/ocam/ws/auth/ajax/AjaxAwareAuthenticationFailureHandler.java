@@ -35,26 +35,23 @@ public class AjaxAwareAuthenticationFailureHandler
 			HttpServletResponse response, AuthenticationException e)
 			throws IOException, ServletException {
 
-		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
 		if (e instanceof BadCredentialsException) {
+			response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			mapper.writeValue(response.getWriter(),
 					ErrorResponse.of("Invalid username or password",
 							ErrorCode.AUTHENTICATION, HttpStatus.UNAUTHORIZED));
 		} else if (e instanceof JwtExpiredTokenException) {
+			response.setStatus(HttpStatus.FORBIDDEN.value());
 			mapper.writeValue(response.getWriter(),
 					ErrorResponse.of("Token has expired",
-							ErrorCode.JWT_TOKEN_EXPIRED,
-							HttpStatus.UNAUTHORIZED));
+							ErrorCode.JWT_TOKEN_EXPIRED, HttpStatus.FORBIDDEN));
 		} else if (e instanceof AuthMethodNotSupportedException) {
+			response.setStatus(HttpStatus.UNPROCESSABLE_ENTITY.value());
 			mapper.writeValue(response.getWriter(),
 					ErrorResponse.of(e.getMessage(), ErrorCode.AUTHENTICATION,
-							HttpStatus.UNAUTHORIZED));
+							HttpStatus.UNPROCESSABLE_ENTITY));
 		}
-
-		mapper.writeValue(response.getWriter(),
-				ErrorResponse.of("Authentication failed",
-						ErrorCode.AUTHENTICATION, HttpStatus.UNAUTHORIZED));
 	}
 }
