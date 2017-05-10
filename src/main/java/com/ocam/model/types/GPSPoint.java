@@ -7,24 +7,24 @@ import javax.persistence.Embeddable;
 public class GPSPoint {
 
 	@Column(name = "LATITUDE")
-	private float latitude;
+	private double latitude;
 
 	@Column(name = "LONGITUDE")
-	private float longitude;
+	private double longitude;
 
-	public float getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(float latitude) {
+	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
 
-	public float getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(float longitude) {
+	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
 }
