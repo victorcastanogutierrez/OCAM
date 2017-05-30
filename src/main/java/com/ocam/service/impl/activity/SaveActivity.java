@@ -87,10 +87,19 @@ public class SaveActivity {
 			act.setGuides(activity.getGuides());
 			if (activity.getDeleted() != null
 					&& Boolean.TRUE.equals(activity.getDeleted())) {
-				act.setDeleted(Boolean.TRUE);
+				if (assertActivityPending(activity)) {
+					act.setDeleted(Boolean.TRUE);
+				} else {
+					throw new BusinessException(
+							"Para eliminar una actividad deberá estar en estado pendiente");
+				}
 			}
 			return act;
 		}
+	}
+
+	private boolean assertActivityPending(Activity activity) {
+		return ActivityStatus.PENDING.equals(activity.getStatus());
 	}
 
 	private boolean assertMIDE(Activity activity) {

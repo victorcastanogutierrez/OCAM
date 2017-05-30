@@ -1,6 +1,7 @@
 package com.ocam.service.impl.report;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,7 +9,7 @@ import com.ocam.model.Activity;
 import com.ocam.model.Hiker;
 import com.ocam.model.Report;
 import com.ocam.model.exception.BusinessException;
-import com.ocam.model.types.ActivityStatus;
+import com.ocam.repository.ActivityRepository;
 import com.ocam.repository.HikerRepository;
 import com.ocam.repository.ReportRepository;
 
@@ -17,12 +18,15 @@ public class SaveReport {
 
 	private HikerRepository hikerRepository;
 	private ReportRepository reportRepository;
+	private ActivityRepository activityRepository;
 
 	@Autowired
 	public SaveReport(HikerRepository hikerRepository,
-			ReportRepository reportRepository) {
+			ReportRepository reportRepository,
+			ActivityRepository activityRepository) {
 		this.hikerRepository = hikerRepository;
 		this.reportRepository = reportRepository;
+		this.activityRepository = activityRepository;
 	}
 
 	@Transactional(readOnly = false)
@@ -36,7 +40,8 @@ public class SaveReport {
 					"Hiker asociado al report no encontrado");
 		}
 
-		Activity act = findActivityHiker(h);
+		Activity act = activityRepository.findActivityRunningByHiker(h,
+				new PageRequest(0, 1));
 		if (!assertActivity(act)) {
 			throw new BusinessException(
 					"El hiker no participa en ninguna actividad");
@@ -69,11 +74,12 @@ public class SaveReport {
 	 * @param h
 	 * @return
 	 */
-	private Activity findActivityHiker(Hiker h) {
-		return h.getActivities().stream()
-				.filter(x -> ActivityStatus.RUNNING.equals(x.getStatus()))
-				.findFirst().orElse(null);
-	}
+	/*
+	 * private Activity findActivityHiker(Hiker h) { return
+	 * h.getActivities().stream() .filter(x ->
+	 * ActivityStatus.RUNNING.equals(x.getStatus()) &&
+	 * Boolean.FALSE.equals(x.getDeleted())) .findFirst().orElse(null); }
+	 */
 
 	/**
 	 * Comprueba que el hiker pertenezca como participante a la actividad
