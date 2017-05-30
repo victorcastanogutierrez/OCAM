@@ -23,7 +23,7 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
 	ActivityStatus findActivityStatusById(@Param("id") Long id);
 
 	@Query("select a from Hiker h join h.activities a where a.status = 'RUNNING' and a.deleted = false")
-	Activity findActivityRunningByHiker(@Param("hiker") Hiker hiker,
+	List<Activity> findActivityRunningByHiker(@Param("hiker") Hiker hiker,
 			Pageable pageable);
 
 }

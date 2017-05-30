@@ -1,5 +1,7 @@
 package com.ocam.service.impl.report;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -40,8 +42,7 @@ public class SaveReport {
 					"Hiker asociado al report no encontrado");
 		}
 
-		Activity act = activityRepository.findActivityRunningByHiker(h,
-				new PageRequest(0, 1));
+		Activity act = getActivityHikerRunning(h);
 		if (!assertActivity(act)) {
 			throw new BusinessException(
 					"El hiker no participa en ninguna actividad");
@@ -74,12 +75,14 @@ public class SaveReport {
 	 * @param h
 	 * @return
 	 */
-	/*
-	 * private Activity findActivityHiker(Hiker h) { return
-	 * h.getActivities().stream() .filter(x ->
-	 * ActivityStatus.RUNNING.equals(x.getStatus()) &&
-	 * Boolean.FALSE.equals(x.getDeleted())) .findFirst().orElse(null); }
-	 */
+	private Activity getActivityHikerRunning(Hiker h) {
+		List<Activity> acts = activityRepository.findActivityRunningByHiker(h,
+				new PageRequest(0, 1));
+		if (acts.size() == 0) {
+			return null;
+		}
+		return acts.get(0);
+	}
 
 	/**
 	 * Comprueba que el hiker pertenezca como participante a la actividad
