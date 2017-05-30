@@ -22,7 +22,7 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
 	@Query("select a.status from Activity a where a.id = :id")
 	ActivityStatus findActivityStatusById(@Param("id") Long id);
 
-	@Query("select a from Hiker h join h.activities a where a.status = 'RUNNING' and a.deleted = false")
+	@Query("select a from Hiker h join h.activities a where a.status = 'RUNNING' and a.deleted = false and h=:hiker")
 	List<Activity> findActivityRunningByHiker(@Param("hiker") Hiker hiker,
 			Pageable pageable);
 

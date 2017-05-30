@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,8 +77,9 @@ public class SaveReport {
 	 * @return
 	 */
 	private Activity getActivityHikerRunning(Hiker h) {
+		Pageable rows = new PageRequest(0, 1);
 		List<Activity> acts = activityRepository.findActivityRunningByHiker(h,
-				new PageRequest(0, 1));
+				rows);
 		if (acts.size() == 0) {
 			return null;
 		}
