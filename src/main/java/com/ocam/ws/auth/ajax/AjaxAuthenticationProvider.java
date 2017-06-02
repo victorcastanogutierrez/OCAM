@@ -12,7 +12,6 @@ import org.springframework.util.Assert;
 import com.ocam.model.Hiker;
 import com.ocam.model.exception.BusinessException;
 import com.ocam.service.HikerService;
-import com.ocam.ws.auth.exception.DecodeDataException;
 import com.ocam.ws.auth.model.UserContext;
 
 @Component
@@ -36,7 +35,8 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 		try {
 			hiker = hikerService.findHikerByLoginPassword(username, password);
 		} catch (BusinessException e) {
-			throw new DecodeDataException(e.getMessage());
+			throw new BadCredentialsException(
+					"Usuario no activo o no encontrado.");
 		}
 
 		if (hiker == null) {
