@@ -42,6 +42,10 @@ public class FindLastActivityReports {
 	 */
 	@Transactional(readOnly = true)
 	public Set<Report> execute(Long activityId) throws BusinessException {
+		if (!assertActivityId(activityId)) {
+			throw new BusinessException("ID de actividad inválida");
+		}
+
 		Activity activity = activityRepository.findOne(activityId);
 		if (!assertActivityNotNull(activity)) {
 			throw new BusinessException("Error procesando la actividad");
@@ -61,6 +65,10 @@ public class FindLastActivityReports {
 		return result.stream()
 				.filter(x -> isInActivity(x.getHiker(), x.getActivity()))
 				.collect(Collectors.toSet());
+	}
+
+	private Boolean assertActivityId(Long id) {
+		return id != null;
 	}
 
 	/**

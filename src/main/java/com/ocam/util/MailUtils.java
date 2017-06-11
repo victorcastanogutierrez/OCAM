@@ -13,6 +13,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.core.env.Environment;
+
 import com.ocam.model.exception.BusinessException;
 
 public class MailUtils {
@@ -70,5 +72,21 @@ public class MailUtils {
 		SecureRandom random = new SecureRandom();
 		String salt = new BigInteger(130, random).toString(32);
 		return MD5Util.MD5(name) + salt;
+	}
+
+	/**
+	 * Obtiene el perfil de la aplicación
+	 * 
+	 * @return
+	 */
+	public static boolean assertPuedeEnviarEmails(Environment environment) {
+
+		String[] prof = environment.getActiveProfiles();
+		for (String s : prof) {
+			if (s.equals("test") || s.equals("prodPostgre")) {
+				return Boolean.FALSE;
+			}
+		}
+		return Boolean.TRUE;
 	}
 }

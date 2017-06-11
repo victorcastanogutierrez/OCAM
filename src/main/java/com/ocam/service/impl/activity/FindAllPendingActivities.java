@@ -47,6 +47,10 @@ public class FindAllPendingActivities {
 	public List<Activity> execute(ActivityDTO criteria)
 			throws BusinessException {
 
+		if (!assertCriteria(criteria)) {
+			throw new BusinessException("Criterios requeridos para la query");
+		}
+
 		if (!assertValidCriteria(criteria)) {
 			throw new BusinessException(
 					"Datos de mínimo y máximo requeridos para la query");
@@ -96,5 +100,10 @@ public class FindAllPendingActivities {
 	private boolean assertValidCriteria(ActivityDTO criteria) {
 		return criteria != null
 				? criteria.getMaxResults() > criteria.getMinResults() : false;
+	}
+
+	private boolean assertCriteria(ActivityDTO criteria) {
+		return criteria != null && criteria.getMaxResults() != null
+				&& criteria.getMinResults() != null;
 	}
 }

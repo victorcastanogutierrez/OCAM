@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,10 +20,13 @@ public class ResetHikerPassword {
 
 	private HikerRepository hikerRepository;
 	private SecureRandom random = new SecureRandom();
+	private Environment environment;
 
 	@Autowired
-	public ResetHikerPassword(HikerRepository hikerRepository) {
+	public ResetHikerPassword(HikerRepository hikerRepository,
+			Environment environment) {
 		this.hikerRepository = hikerRepository;
+		this.environment = environment;
 	}
 
 	@Transactional(readOnly = false)
@@ -46,12 +50,19 @@ public class ResetHikerPassword {
 		}
 
 		h.setPassword(encryptedNewPassword);
-		MailUtils.sendEmail(email, "Nueva contraseña OCAM", "Hola "
-				+ h.getLogin() + "\n"
-				+ "Has solicitado una nueva contraseña. La contraseña nueva asignada a la cuenta es: "
-				+ newPassword + "\n"
-				+ "Puedes acceder con ella tanto a la web como a la aplicación móvil "
-				+ "y cambiarla desde cualquiera de los dos indistintamente");
+
+		if (MailUtils.assertPuedeEnviarEmails(this.environment)) {
+			MailUtils.sendEmail(email, "Nueva contraseña OCAM", "Hola "
+					+ h.getLogin() + "\n"
+					+ "Has solicitado una nueva contraseña. La contraseña nueva asignada a la cuenta es: "
+					+ newPassword + "\n"
+					+ "Puedes acceder con ella tanto a la web como a la aplicación móvil "
+					+ "y cambiarla desde cualquiera de los dos indistintamente");
+		} else {
+			throw new BusinessException(
+					"No hemos podido enviarte un email. La nueva password es: "
+							+ newPassword);
+		}
 	}
 
 	private boolean assertCodedPassword(String password) {

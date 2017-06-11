@@ -22,6 +22,10 @@ public class UpdateActivityStatus {
 	@Transactional(readOnly = false)
 	public void execute(Long activityId, ActivityStatus activityStatus)
 			throws BusinessException {
+		if (!assertActivityId(activityId)
+				|| !assertActivityStatus(activityStatus)) {
+			throw new BusinessException("ID o status inválidos.");
+		}
 
 		Activity activity = activityRepository.findOne(activityId);
 
@@ -31,6 +35,14 @@ public class UpdateActivityStatus {
 		} else {
 			throw new BusinessException("La actividad no existe");
 		}
+	}
+
+	private boolean assertActivityStatus(ActivityStatus activityStatus) {
+		return activityStatus != null;
+	}
+
+	private boolean assertActivityId(Long activityId) {
+		return activityId != null;
 	}
 
 	private boolean assertActivityNotRemoved(Activity activity) {

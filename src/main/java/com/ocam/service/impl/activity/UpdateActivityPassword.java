@@ -34,6 +34,9 @@ public class UpdateActivityPassword {
 					"No tienes permisos para cambiar la password");
 		}
 
+		if (!assertActivity(activitydto.getActivity())) {
+			throw new BusinessException("Actividad inválida");
+		}
 		Activity activity = activitydto.getActivity();
 
 		if (!assertPasswordValid(activity)) {

@@ -1,17 +1,20 @@
 package com.ocam;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,127 +26,193 @@ import com.ocam.model.Activity;
 import com.ocam.model.ActivityDTO;
 import com.ocam.model.ActivityHikerDTO;
 import com.ocam.model.Hiker;
-import com.ocam.model.HikerDTO;
 import com.ocam.model.Report;
 import com.ocam.model.exception.BusinessException;
+import com.ocam.model.types.ActivityStatus;
 import com.ocam.model.types.GPSPoint;
+import com.ocam.repository.ActivityRepository;
+import com.ocam.repository.HikerRepository;
 import com.ocam.repository.ReportRepository;
 import com.ocam.service.ActivityService;
-import com.ocam.service.HikerService;
-import com.ocam.service.ReportService;
 
 @Rollback(true)
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ActivityServiceTest {
 
-	final Logger log = Logger.getLogger(HikerServiceTest.class.getName());
-
-	private Activity act;
-	private Hiker hiker;
-	private Date actualDate = new Date();
+	@Rule
+	public final ExpectedException exception = ExpectedException.none();
 
 	@Autowired
 	private ActivityService activityService;
 
 	@Autowired
-	private HikerService hikerService;
-
-	@Autowired
-	private ReportService reportService;
-
-	@Autowired
 	private ReportRepository reportRepository;
 
-	@Before
-	public void test() {
-		setUpDate();
-		testSave();
-	}
+	@Autowired
+	private HikerRepository hikerRepository;
+
+	@Autowired
+	private ActivityRepository activityRepository;
+
+	private int hikers = 0;
 
 	@Test
 	@Rollback(true)
 	@Transactional(readOnly = false)
-	public void testFindAllPending() {
-		Activity activity = new Activity();
-		activity.setStartDate(new Date());
-		activity.setTrack("");
-		activity.setLongDescription("Descripcion larga");
-		activity.setShortDescription("Descripcion corta");
-		ActivityHikerDTO act = new ActivityHikerDTO();
-		act.setActivity(activity);
+	public void testSave() {
+		ActivityHikerDTO actDTO = new ActivityHikerDTO();
+		Hiker hiker = new Hiker();
 
-		HikerDTO h = new HikerDTO();
-		h.setUsername("loginT");
-		h.setPassword("passT");
-		h.setEmail("emT");
+		expectActivitySaveError(actDTO); // No hay hiker
 
+		actDTO.setHiker(hiker);
+		expectActivitySaveError(actDTO); // Hiker sin login
+
+		hiker.setLogin("login");
+		expectActivitySaveError(actDTO); // Hiker no persistido
+
+		hiker = getHikerMock();
+		hikerRepository.save(hiker);
+		actDTO.setHiker(hiker);
+
+		Activity act = getActivityMock();
+		activityRepository.save(act);
+		actDTO.setActivity(act);
+
+		expectActivitySaveError(actDTO); // Error de permisos para edición
+
+		act.setOwner(hiker);
+		actDTO.setRequestUser(hiker.getLogin());
+		Hiker guia = getHikerMock();
+		act.getGuides().add(guia);
+		expectActivitySaveError(actDTO); // Guía no persistido
+		hikerRepository.save(guia);
+
+		act.setMide("asd");
+		expectActivitySaveError(actDTO); // MIDE invalido
+
+		act.setMide("http://www.google.es");
+		act.setDeleted(Boolean.TRUE);
+		act.setStatus(ActivityStatus.RUNNING);
+		expectActivitySaveError(actDTO); // Intento de eliminar estando en curso
+
+		act.setStatus(ActivityStatus.PENDING);
 		try {
-			hikerService.saveHiker(h);
-			Hiker hiker = hikerService.findHikerByLogin(h.getUsername());
-			act.setHiker(hiker);
-			activityService.saveActivity(act);
-			ActivityDTO actDto = new ActivityDTO(Integer.MAX_VALUE, 0);
-
-			List<Activity> pendingActivities;
-
-			pendingActivities = activityService
-					.findAllPendingActivities(actDto);
-
-			assertEquals(2, pendingActivities.size());
-
-			activityService.closeActivity(this.act.getId());
-			pendingActivities = activityService
-					.findAllPendingActivities(actDto);
-
-			assertEquals(1, pendingActivities.size());
-
-			activityService.startActivity(this.act.getId(), "passwd", null);
-			pendingActivities = activityService
-					.findAllPendingActivities(actDto);
-
-			assertEquals(2, pendingActivities.size());
+			activityService.saveActivity(actDTO);
 		} catch (BusinessException e) {
-			assertNull(e);
+			assertNull(e); // Actualizacion correcta
 		}
+
+		act = getActivityMock();
+		act.getGuides().add(guia);
+		try {
+			activityService.saveActivity(actDTO);
+		} catch (BusinessException e) {
+			assertNull(e); // Guardado correcto
+		}
+
+		assertNotNull(
+				activityService.findActivityById(actDTO.getActivity().getId()));
 	}
 
 	@Test
 	@Rollback(true)
 	@Transactional(readOnly = false)
 	public void testFindLastActivityReports() {
-		ActivityDTO actDto = new ActivityDTO(Integer.MAX_VALUE, 0);
-		List<Activity> pendingActivities;
+		Activity act = getActivityMock();
+
 		try {
-			pendingActivities = activityService
-					.findAllPendingActivities(actDto);
-			assertEquals(1, pendingActivities.size());
+			activityService.findLastActivityReports(act.getId());
+			fail("Se esperaba error: id null");
 		} catch (BusinessException e) {
-			assertNull(e);
 		}
 
-		Set<Report> lastReports = null;
+		activityRepository.save(act);
+		Hiker h = getHikerMock();
+		Hiker h1 = getHikerMock();
+		Hiker h2 = getHikerMock();
+		hikerRepository.save(h);
+		hikerRepository.save(h1);
+		hikerRepository.save(h2);
+
 		try {
-			lastReports = activityService
-					.findLastActivityReports(this.act.getId());
+			Set<Report> reports = activityService
+					.findLastActivityReports(act.getId());
+			assertTrue(reports.isEmpty());
+			act.getReports().add(getReportMock(act, h));
+			act.getReports().add(getReportMock(act, h1));
+			act.getReports().add(getReportMock(act, h2));
+			reportRepository.save(act.getReports());
+
+			reports = activityService.findLastActivityReports(act.getId());
+			assertEquals(0, reports.size()); // No están unidos en la actividad
+
+			act.getHikers().add(h);
+			act.getHikers().add(h1);
+			act.getHikers().add(h2);
+			h.getActivities().add(act);
+			h1.getActivities().add(act);
+			h2.getActivities().add(act);
+
+			reports = activityService.findLastActivityReports(act.getId());
+			assertEquals(3, reports.size());
+
+			Calendar c = Calendar.getInstance(); // Prueba que se quede con el
+													// report mas reciente
+			c.setTime(new Date());
+			c.add(Calendar.DAY_OF_MONTH, 10);
+			Report posterior = getReportMock(act, h1);
+			posterior.setDate(c.getTime());
+			reportRepository.save(posterior);
+			act.getReports().add(posterior);
+
+			reports = activityService.findLastActivityReports(act.getId());
+			assertEquals(3, reports.size()); // Solo uno por hiker
+
 		} catch (BusinessException e) {
-			assertNull(e);
+			fail("No debería haber errores");
 		}
-		assertEquals(2, lastReports.size());
+	}
 
-		Date actual = new Date();
-		for (Report r : lastReports) {
-			r.setDate(actual);
+	@Test
+	@Rollback(true)
+	@Transactional(readOnly = false)
+	public void testFindAllPendingActivities() {
+		try {
+			activityService.findAllPendingActivities(null);
+			fail("Se espera error: sin criterios de búsqueda");
+		} catch (BusinessException e) {
 		}
+
+		ActivityDTO actDTO = new ActivityDTO();
 
 		try {
-			lastReports = activityService
-					.findLastActivityReports(this.act.getId());
-			for (Report r : lastReports) {
-				assertEquals(actual, r.getDate());
+			activityService.findAllPendingActivities(actDTO);
+			fail("Se espera error: criterios inválidos");
+		} catch (BusinessException e) {
+		}
+
+		actDTO.setMaxResults(Integer.MAX_VALUE);
+		actDTO.setMinResults(0);
+		try {
+			assertTrue(
+					activityService.findAllPendingActivities(actDTO).isEmpty());
+
+			int r = new Random().nextInt(10) + 5;
+			for (int i = 0; i < r; i++) {
+				activityRepository.save(getActivityMock());
 			}
+
+			assertEquals(r,
+					activityService.findAllPendingActivities(actDTO).size());
+
+			actDTO.setMaxResults(1);
+			assertEquals(1,
+					activityService.findAllPendingActivities(actDTO).size());
+
 		} catch (BusinessException e) {
-			assertNull(e);
+			fail("No debería haber errores");
 		}
 	}
 
@@ -151,118 +220,421 @@ public class ActivityServiceTest {
 	@Rollback(true)
 	@Transactional(readOnly = false)
 	public void testFindActivityReportsByHiker() {
-		assertEquals(2,
-				activityService.findActivityReportsByHiker(this.act.getId(),
-						this.hiker.getEmail()).size());
+		assertNull(activityService.findActivityReportsByHiker(null, null));
+		assertNull(activityService.findActivityReportsByHiker(10L, null));
+		assertNull(activityService.findActivityReportsByHiker(null, "email"));
+		assertNull(activityService.findActivityReportsByHiker(10L, "email"));
 
-		Report r = getNewReport();
-		this.reportRepository.save(r);
+		Activity act = getActivityMock();
+		Hiker hik = getHikerMock();
 
-		Set<Report> reports = activityService.findActivityReportsByHiker(
-				this.act.getId(), this.hiker.getEmail());
-		assertEquals(3, reports.size());
+		assertNull(activityService.findActivityReportsByHiker(act.getId(),
+				hik.getEmail()));
+		activityRepository.save(act);
+		assertNull(activityService.findActivityReportsByHiker(act.getId(),
+				hik.getEmail()));
+		hikerRepository.save(hik);
+		assertTrue(activityService
+				.findActivityReportsByHiker(act.getId(), hik.getEmail())
+				.isEmpty());
 
-		this.reportRepository.delete(reports.stream().findFirst().get());
-		assertEquals(2,
-				activityService.findActivityReportsByHiker(this.act.getId(),
-						this.hiker.getEmail()).size());
-
-		reports.forEach(x -> this.reportRepository.delete(x));
-		assertEquals(0,
-				activityService.findActivityReportsByHiker(this.act.getId(),
-						this.hiker.getEmail()).size());
+		Report r = getReportMock(act, hik);
+		reportRepository.save(r);
+		hik.getReports().add(r);
+		act.getReports().add(r);
+		assertEquals(1,
+				activityService
+						.findActivityReportsByHiker(act.getId(), hik.getEmail())
+						.size());
 	}
 
-	private Report getNewReport() {
-		Report r = new Report();
-		r.setDate(this.actualDate);
-		r.setActivity(act);
-		r.setHiker(hiker);
-		r.setPoint(new GPSPoint());
-		return r;
-	}
-
-	private void setUpDate() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(this.actualDate);
-		calendar.add(Calendar.DAY_OF_MONTH, -2);
-		this.actualDate = calendar.getTime();
-	}
-
+	@Test
+	@Rollback(true)
 	@Transactional(readOnly = false)
-	private void testSave() {
-		this.act = new Activity();
-		this.act.setStartDate(new Date());
-		this.act.setTrack("");
-		this.act.setLongDescription("Descripcion larga");
-		this.act.setShortDescription("Descripcion corta");
-		this.act.setPassword("123");
+	public void testJoinActivityHiker() {
+		try {
+			activityService.joinActivityHiker(10L, "login", "password");
 
-		HikerDTO hdto = new HikerDTO();
-		hdto.setUsername("log1");
-		hdto.setPassword("passwd1");
-		hdto.setEmail("em1");
+			fail("Debería haber errores por argumentos inválidos");
+		} catch (BusinessException e) {
+		}
 
-		HikerDTO hdto2 = new HikerDTO();
-		hdto2.setUsername("log2");
-		hdto2.setPassword("passwd2");
-		hdto2.setEmail("em2");
-
-		Hiker h2 = null;
-
-		ActivityHikerDTO act = new ActivityHikerDTO();
-		act.setActivity(this.act);
-		act.setHiker(this.hiker);
+		String password_valida = "password_valida";
+		String password_invalida = "password_invalida";
+		Hiker h = getHikerMock();
+		Activity a = getActivityMock();
+		hikerRepository.save(h);
+		activityRepository.save(a);
 
 		try {
-			hikerService.saveHiker(hdto);
-			this.hiker = hikerService.findHikerByLogin(hdto.getUsername());
-			assertNotNull(this.hiker);
-			hikerService.saveHiker(hdto2);
-			h2 = hikerService.findHikerByLogin(hdto2.getUsername());
-			act.setHiker(this.hiker);
-			activityService.saveActivity(act);
+			a.setPassword(password_valida);
+			activityService.joinActivityHiker(a.getId(), h.getLogin(),
+					password_invalida);
+
+			fail("Debería haber error por password invalida");
 		} catch (BusinessException e) {
-			assertNull(e);
+		}
+
+		h.getActivities().add(a);
+		a.getHikers().add(h);
+
+		try {
+			h.setPassword(password_valida);
+			activityService.joinActivityHiker(a.getId(), h.getLogin(),
+					password_valida);
+
+			fail("Debería haber error: hiker ya unido");
+		} catch (BusinessException e) {
+		}
+
+		h.getActivities().remove(a);
+		a.getHikers().remove(h);
+
+		Activity a2 = getActivityMock();
+		activityRepository.save(a2);
+		a2.setStatus(ActivityStatus.RUNNING);
+
+		h.getActivities().add(a2);
+		a2.getHikers().add(h);
+
+		try {
+			h.setPassword(password_valida);
+			activityService.joinActivityHiker(a.getId(), h.getLogin(),
+					password_valida);
+
+			fail("Debería haber error: hiker ya unido en una actividad en curso");
+		} catch (BusinessException e) {
+		}
+
+		a2.setStatus(ActivityStatus.CLOSED);
+
+		try {
+			h.setPassword(password_valida);
+			activityService.joinActivityHiker(a.getId(), h.getLogin(),
+					password_valida);
+		} catch (BusinessException e) {
+			fail("No debería haber errores");
+		}
+	}
+
+	@Test
+	@Rollback(true)
+	@Transactional(readOnly = false)
+	public void testCloseActivity() {
+		try {
+			activityService.closeActivity(10L);
+
+			fail("Debería haber errores por argumentos inválidos");
+		} catch (BusinessException e) {
+		}
+
+		Activity a = getActivityMock();
+		activityRepository.save(a);
+		a.setDeleted(Boolean.TRUE);
+
+		try {
+			activityService.closeActivity(a.getId());
+
+			fail("Debería haber errores por actividad eliminada");
+		} catch (BusinessException e) {
+		}
+
+		a.setDeleted(Boolean.FALSE);
+		try {
+			activityService.closeActivity(a.getId());
+		} catch (BusinessException e) {
+			fail("No debería haber errores.");
+		}
+	}
+
+	@Test
+	@Rollback(true)
+	@Transactional(readOnly = false)
+	public void testCheckActivityPassword() {
+		ActivityDTO aDTO = new ActivityDTO();
+		aDTO.setId(10L);
+
+		try {
+			activityService.checkActivityPassword(aDTO);
+
+			fail("Debería haber errores por actividad inexistente");
+		} catch (BusinessException e) {
+		}
+
+		Activity a = getActivityMock();
+		activityRepository.save(a);
+		aDTO.setId(a.getId());
+
+		try {
+			activityService.checkActivityPassword(aDTO);
+
+			fail("Debería haber errores por password inexistente");
+		} catch (BusinessException e) {
+		}
+
+		aDTO.setPassword("password");
+		try {
+			activityService.checkActivityPassword(aDTO);
+			fail("Debería haber errores por password aún no asociada a actividad");
+		} catch (BusinessException e) {
+		}
+
+		a.setPassword("password");
+		aDTO.setPassword("invalida");
+		try {
+			activityService.checkActivityPassword(aDTO);
+
+			fail("Debería haber errores por password invalida");
+		} catch (BusinessException e) {
+		}
+
+		aDTO.setPassword("password");
+		try {
+			activityService.checkActivityPassword(aDTO);
+		} catch (BusinessException e) {
+			fail("No debería haber errores");
+		}
+	}
+
+	@Test
+	@Rollback(true)
+	@Transactional(readOnly = false)
+	public void testFindActivityById() {
+		assertNull(activityService.findActivityById(null));
+		assertNull(activityService.findActivityById(10L));
+		Activity a = getActivityMock();
+		activityRepository.save(a);
+		assertNotNull(activityService.findActivityById(a.getId()));
+	}
+
+	@Test
+	@Rollback(true)
+	@Transactional(readOnly = false)
+	public void testStartActivity() {
+		try {
+			activityService.startActivity(null, null, null);
+
+			fail("Debería haber errores por argumentos inválidos");
+		} catch (BusinessException e) {
+		}
+
+		Hiker h = getHikerMock();
+		Activity a = getActivityMock();
+		hikerRepository.save(h);
+		activityRepository.save(a);
+
+		try {
+			activityService.startActivity(a.getId(), "password", h.getLogin());
+			fail("Debeía haber errores por no ser guía de la actividad");
+		} catch (BusinessException e) {
+		}
+
+		a.getGuides().add(h);
+		h.getActivityGuide().add(a);
+
+		try {
+			activityService.startActivity(a.getId(), "password", h.getLogin());
+			ActivityDTO aDTO = new ActivityDTO();
+			aDTO.setId(a.getId());
+			aDTO.setPassword("password");
+			activityService.checkActivityPassword(aDTO);
+			assertEquals(
+					activityService.findActivityById(a.getId()).getStatus(),
+					ActivityStatus.RUNNING);
+		} catch (BusinessException e) {
+			fail("No debería haber errores");
+		}
+	}
+
+	@Test
+	@Rollback(true)
+	@Transactional(readOnly = false)
+	public void testUpdateActivityPassword() {
+		ActivityHikerDTO aDTO = new ActivityHikerDTO();
+		Activity a = getActivityMock();
+		Hiker h = getHikerMock();
+		activityRepository.save(a);
+
+		try {
+			activityService.updateActivityPassword(aDTO);
+			fail("Debería haber errores por argumentos inválidos");
+		} catch (BusinessException e) {
+		}
+
+		aDTO.setActivity(a);
+		aDTO.setRequestUser("victor");
+		try {
+			activityService.updateActivityPassword(aDTO);
+			fail("Debería haber errores por password invalida");
+		} catch (BusinessException e) {
+		}
+
+		a.setPassword("a");
+		try {
+			activityService.updateActivityPassword(aDTO);
+			fail("Debería haber errores por password invalida");
+		} catch (BusinessException e) {
+		}
+
+		a.setPassword("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+		try {
+			activityService.updateActivityPassword(aDTO);
+			fail("Debería haber errores por password invalida");
+		} catch (BusinessException e) {
+		}
+
+		a.setPassword("aaaaaa");
+		try {
+			activityService.updateActivityPassword(aDTO);
+			fail("Debería haber errores por hiker inexistente");
+		} catch (BusinessException e) {
+		}
+
+		hikerRepository.save(h);
+		aDTO.setRequestUser(h.getLogin());
+		try {
+			activityService.updateActivityPassword(aDTO);
+			fail("Debería haber errores por hiker no guía");
+		} catch (BusinessException e) {
+		}
+
+		h.getActivityGuide().add(a);
+		a.getGuides().add(h);
+		try {
+			activityService.updateActivityPassword(aDTO);
+		} catch (BusinessException e) {
+			fail("No debería haber errores");
+		}
+	}
+
+	@Test
+	@Rollback(true)
+	@Transactional(readOnly = false)
+	public void testFindACtivityHikers() {
+
+		Hiker h = getHikerMock();
+		Hiker h2 = getHikerMock();
+		Hiker h1 = getHikerMock();
+		Hiker h3 = getHikerMock();
+		Activity a = getActivityMock();
+		activityRepository.save(a);
+		hikerRepository.save(h);
+		hikerRepository.save(h1);
+		hikerRepository.save(h2);
+		hikerRepository.save(h3);
+
+		try {
+			activityService.findActivityHikers(null);
+			fail("Debería haber errores por argumentos inválidos");
+		} catch (BusinessException e) {
 		}
 
 		try {
-			activityService.joinActivityHiker(this.act.getId(),
-					this.hiker.getLogin(), "123");
-			activityService.joinActivityHiker(this.act.getId(), h2.getLogin(),
-					"123");
+			activityService.findActivityHikers(5L);
+			fail("Debería haber errores por argumentos inválidos");
 		} catch (BusinessException e) {
-			assertNull(e);
 		}
 
-		Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
-		c.add(Calendar.DAY_OF_MONTH, -1);
-		Date date2 = c.getTime();
+		a.getHikers().add(h);
+		a.getHikers().add(h1);
+		a.getHikers().add(h2);
+		a.getHikers().add(h3);
+		h.getActivities().add(a);
+		h1.getActivities().add(a);
+		h2.getActivities().add(a);
+		h3.getActivities().add(a);
+
+		try {
+			assertEquals(4,
+					activityService.findActivityHikers(a.getId()).size());
+		} catch (BusinessException e) {
+			fail("No debería haber errores");
+		}
+	}
+
+	@Test
+	@Rollback(true)
+	@Transactional(readOnly = false)
+	public void testDeleteActivityHiker() {
+		try {
+			activityService.deleteActivityHiker(10L, "victor");
+			fail("Debería haber errores por argumentos inválidos");
+		} catch (BusinessException e) {
+		}
+
+		Hiker h = getHikerMock();
+		Activity a = getActivityMock();
+		activityRepository.save(a);
+		hikerRepository.save(h);
+
+		a.setStatus(ActivityStatus.PENDING);
+		try {
+			activityService.deleteActivityHiker(a.getId(), h.getLogin());
+			fail("Debería haber errores por actividad pendiente");
+		} catch (BusinessException e) {
+		}
+
+		a.setStatus(ActivityStatus.RUNNING);
+		try {
+			activityService.deleteActivityHiker(a.getId(), h.getLogin());
+			fail("Debería haber errores por no pertenecer a la actividad");
+		} catch (BusinessException e) {
+		}
+
+		a.setPassword("password");
+		try {
+			activityService.joinActivityHiker(a.getId(), h.getLogin(),
+					"password");
+			assertFalse(
+					activityService.findActivityHikers(a.getId()).isEmpty());
+			activityService.deleteActivityHiker(a.getId(), h.getLogin());
+			assertTrue(activityService.findActivityHikers(a.getId()).isEmpty());
+		} catch (BusinessException e) {
+			fail("No debería haber errores");
+		}
+	}
+
+	private void expectActivitySaveError(ActivityHikerDTO actDTO) {
+		try {
+			activityService.saveActivity(actDTO);
+			fail("Se esperaba error");
+		} catch (BusinessException e) {
+		}
+	}
+
+	private Activity getActivityMock() {
+		Activity activity = new Activity();
+		activity.setShortDescription("Descrt");
+		activity.setTrack("track");
+		activity.setStartDate(new Date());
+		activity.setStatus(ActivityStatus.PENDING);
+		return activity;
+	}
+
+	/**
+	 * Retorna un hiker diferente en cada llamada
+	 * 
+	 * @return
+	 */
+	private Hiker getHikerMock() {
+		Hiker hiker = new Hiker();
+		hiker.setLogin("login" + hikers);
+		hiker.setEmail("email" + hikers);
+		hiker.setPassword("password");
+		this.hikers++;
+		return hiker;
+	}
+
+	private Report getReportMock(Activity act, Hiker hik) {
+		Report r = new Report();
+		r.setActivity(act);
+		r.setHiker(hik);
+		r.setDate(new Date());
 		GPSPoint gps = new GPSPoint();
-
-		Report r1 = new Report();
-		r1.setHiker(this.hiker);
-		r1.setDate(this.actualDate);
-		r1.setPoint(gps);
-
-		Report r2 = new Report();
-		r2.setHiker(this.hiker);
-		r2.setDate(date2);
-		r2.setPoint(gps);
-
-		Report r3 = new Report();
-		r3.setHiker(h2);
-		r3.setDate(this.actualDate);
-		r3.setPoint(gps);
-
-		try {
-			reportService.save(r1);
-			reportService.save(r2);
-			reportService.save(r3);
-		} catch (BusinessException e) {
-			assertNull(e);
-		}
+		gps.setLatitude(10);
+		gps.setLongitude(10000);
+		r.setPoint(gps);
+		return r;
 	}
 
 }

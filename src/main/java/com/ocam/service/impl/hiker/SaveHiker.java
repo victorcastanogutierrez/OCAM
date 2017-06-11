@@ -3,6 +3,7 @@ package com.ocam.service.impl.hiker;
 import java.security.NoSuchAlgorithmException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +19,12 @@ public class SaveHiker {
 
 	private HikerRepository hikerRepository;
 
+	private Environment environment;
+
 	@Autowired
-	public SaveHiker(HikerRepository hikerRepository) {
+	public SaveHiker(HikerRepository hikerRepository, Environment environment) {
 		this.hikerRepository = hikerRepository;
+		this.environment = environment;
 	}
 
 	@Transactional(readOnly = false)
@@ -38,6 +42,15 @@ public class SaveHiker {
 
 		Hiker h = getNewHiker(hiker, codedPassword);
 		this.hikerRepository.save(h);
+
+		if (!MailUtils.assertPuedeEnviarEmails(this.environment)) {
+			// En caso de estar en perfil de test, o prodPostgre
+			// activamos el hiker sin correo electrónico
+			h.setActive(Boolean.TRUE);
+			hiker.setActive(Boolean.TRUE);
+			throw new BusinessException(
+					"No hemos podido enviarte un email. La cuenta ya está activada.");
+		}
 
 		if (!assertActiveHiker(hiker)) {
 			try {

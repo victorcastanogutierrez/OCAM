@@ -58,7 +58,8 @@ public class JoinActivityHiker {
 	}
 
 	private boolean assertActivityPassword(Activity activity, String password) {
-		return activity.getPassword().equals(password);
+		return activity.getPassword() != null
+				&& activity.getPassword().equals(password);
 	}
 
 	/**

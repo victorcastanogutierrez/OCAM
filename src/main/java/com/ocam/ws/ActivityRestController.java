@@ -207,7 +207,8 @@ public class ActivityRestController {
 	}
 
 	/**
-	 * Devuelve las actividades pendientes
+	 * Devuelve las actividades pendientes de realización o bien que estén en
+	 * curso
 	 * 
 	 * @return
 	 */
@@ -229,6 +230,13 @@ public class ActivityRestController {
 		return new ResponseEntity<>(acts, HttpStatus.OK);
 	}
 
+	/**
+	 * Da una actividad por comenzada cambiándole el estado a RUNNING
+	 * 
+	 * @param request
+	 * @param activityDTO
+	 * @return
+	 */
 	@RequestMapping(value = "/api/startActivity", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> startActivity(HttpServletRequest request,
@@ -247,6 +255,14 @@ public class ActivityRestController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	/**
+	 * Actualiza la password de una actividad
+	 * 
+	 * @param request
+	 * @param activityId
+	 * @param password
+	 * @return
+	 */
 	@RequestMapping(
 			value = "/api/updateActivityPassword/{activityId}/{password}",
 			method = RequestMethod.POST,
@@ -296,6 +312,12 @@ public class ActivityRestController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	/**
+	 * Retorna todos los Hiker asociados a una actividad, sean guías o no
+	 * 
+	 * @param activityId
+	 * @return
+	 */
 	@RequestMapping(value = "/api/findActivityHikers/{activityId}",
 			method = RequestMethod.GET,
 			produces = MediaType.APPLICATION_JSON_VALUE)
@@ -314,6 +336,12 @@ public class ActivityRestController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+	/**
+	 * Cierra una actividad pasándola a estado CLOSED
+	 * 
+	 * @param activityId
+	 * @return
+	 */
 	@RequestMapping(value = "/api/closeActivity/{activityId}",
 			method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
