@@ -113,8 +113,8 @@ public class ActivityRestController {
 	/**
 	 * Comprueba la password de una actividad
 	 * 
-	 * @param request
-	 * @param activityHiker
+	 * @param id
+	 * @param password
 	 * @return
 	 */
 	@RequestMapping(
@@ -187,7 +187,7 @@ public class ActivityRestController {
 	 * Método que busca los reports de un hiker dado para una actividad dada
 	 * 
 	 * @param activityId
-	 * @param hikerId
+	 * @param hikerEmail
 	 * @return
 	 */
 	@RequestMapping(
