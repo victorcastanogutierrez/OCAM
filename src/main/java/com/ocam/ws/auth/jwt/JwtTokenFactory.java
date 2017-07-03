@@ -20,9 +20,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JwtTokenFactory {
 
 	/**
-	 * Factoria para generar tokens
+	 * Factory method for issuing new JWT Tokens.
 	 * 
-	 * @param userContext
+	 * @param username
+	 * @param roles
 	 * @return
 	 */
 	public AccessJwtToken createAccessJwtToken(UserContext userContext) {

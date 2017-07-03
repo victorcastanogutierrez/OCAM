@@ -35,7 +35,8 @@ public class FindLastActivityReports {
 	 * por fechas. Esa lista la agrupa por Hiker y posteriormente se queda con
 	 * el primer Report de cada Hiker (el que tiene, por tanto, fecha superior)
 	 * 
-	 * @param activityId
+	 * @param activity
+	 *            actividad de la cual se buscan los reportes
 	 * @return
 	 * @throws BusinessException
 	 */

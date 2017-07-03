@@ -27,8 +27,9 @@ public class ReportRestController {
 	/**
 	 * Retorna el objeto Hiker buscándolo por el login
 	 * 
-	 * @param report
-	 * @return
+	 * @param username
+	 *            login del hiker que se quiere buscar
+	 * @return objeto Hiker codificado en JSON. Vacío en caso de no encontrarse
 	 */
 	@RequestMapping(value = "/api/report/save", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)

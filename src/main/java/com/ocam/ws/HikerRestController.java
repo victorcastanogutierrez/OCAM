@@ -52,8 +52,9 @@ public class HikerRestController {
 	/**
 	 * Retorna el objeto Hiker buscándolo por el login
 	 * 
-	 * @param hiker
-	 * @return
+	 * @param username
+	 *            login del hiker que se quiere buscar
+	 * @return objeto Hiker codificado en JSON. Vacío en caso de no encontrarse
 	 */
 	@RequestMapping(value = "/validateHiker", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
@@ -214,7 +215,8 @@ public class HikerRestController {
 	/**
 	 * Genera una nueva contraseña para el hiker
 	 * 
-	 * @param hiker
+	 * @param request
+	 * @param login
 	 * @return
 	 */
 	@RequestMapping(value = "/hiker/resetPassword", method = RequestMethod.POST,
