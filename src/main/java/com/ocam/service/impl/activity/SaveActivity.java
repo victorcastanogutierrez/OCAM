@@ -85,6 +85,9 @@ public class SaveActivity {
 			act.setStartDate(activity.getStartDate());
 			act.setMaxPlaces(activity.getMaxPlaces());
 			act.setGuides(activity.getGuides());
+			if (activity.getTrack() != null) {
+				act.setTrack(activity.getTrack());
+			}
 			if (activity.getDeleted() != null
 					&& Boolean.TRUE.equals(activity.getDeleted())) {
 				if (assertActivityPending(activity)) {
